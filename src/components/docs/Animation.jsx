@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DocsSidebar from "./DocsSidebar";
 
-import scrollQue from "@/utlis/scrollCue.min";
+import scrollQue from "@/utils/scrollCue.min";
 import CodeSnippetContainer from "../common/CodeSnippetContainer";
 export default function Animation() {
   const [showAnim, setShowAnim] = useState(true);

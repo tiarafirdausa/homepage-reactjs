@@ -1,32 +1,61 @@
-import React from "react";
-import Nav from "./Nav";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import useStickyNavbar from "@/hooks/useStickyNavbar";
+import { getSettings } from "@/services/settingsService";
+import { getActiveSocials } from "@/services/socialService";
+import Nav from "./Nav";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { iconMapping } from "@/utils/iconMapping";
+import { BASE_URL } from "@/config/url";
 
-import LanguageSelect from "./LanguageSelect";
-import { socialLinks } from "@/data/socials";
 export default function Header32({
   parentClass = "relative wrapper !bg-[#fff8ee]",
   navClass = "navbar navbar-expand-lg center-nav transparent navbar-light",
 }) {
+  useStickyNavbar();
+  const [logo, setLogo] = useState("/assets/img/logo-dark.png");
+  const [siteTitle, setSiteTitle] = useState("Sandbox");
+  const [socialLinks, setSocialLinks] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const settings = await getSettings();
+        if (settings.appearance && settings.appearance.logo) {
+          setLogo(BASE_URL + settings.appearance.logo);
+        }
+        if (settings.general && settings.general.site_title) {
+          setSiteTitle(settings.general.site_title);
+        }
+
+        const pageSize = 4;
+        const activeSocials = await getActiveSocials(pageSize);
+        setSocialLinks(activeSocials);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <header className={parentClass}>
-      <nav className={navClass}>
+      {/* Menambahkan style dan warna untuk seluruh navigasi */}
+      <nav className={navClass} style={{ "--current-color": "#3f78e0" }}>
         <div className="container xl:!flex-row lg:!flex-row !flex-nowrap items-center">
           <div className="navbar-brand w-full">
             <Link to={`/`}>
-              <img
-                srcSet="/assets/img/logo-dark@2x.png 2x"
-                alt="image"
-                src="/assets/img/logo-dark.png"
-                width={134}
-                height={26}
-              />
+              <div className="flex items-center">
+                <img src={logo} alt="site logo" width={60} height={60} />
+                {/* Menambahkan kelas warna pada judul situs */}
+                <span className="ml-2 !text-[var(--current-color)]">{siteTitle}</span>
+              </div>
             </Link>
           </div>
           <div className="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
             <div className="offcanvas-header xl:!hidden lg:!hidden flex items-center justify-between flex-row p-6">
               <h3 className="!text-white xl:!text-[1.5rem] !text-[calc(1.275rem_+_0.3vw)] !mb-0">
-                Sandbox
+                {siteTitle}
               </h3>
               <button
                 type="button"
@@ -36,9 +65,7 @@ export default function Header32({
               />
             </div>
             <div className="offcanvas-body xl:!ml-auto lg:!ml-auto flex flex-col !h-full">
-              <Nav color="#3f78e0" />
-
-              {/* /.navbar-nav */}
+              <Nav />
               <div className="offcanvas-footer xl:!hidden lg:!hidden">
                 <div>
                   <a
@@ -50,31 +77,24 @@ export default function Header32({
                   <br />
                   00 (123) 456 78 90 <br />
                   <nav className="nav social social-white !mt-4">
-                    {socialLinks.map((elm, i) => (
+                    {socialLinks.map((elm) => (
                       <a
-                        key={i}
+                        key={elm.id}
                         className="!text-[#cacaca] text-[1rem] transition-all duration-[0.2s] ease-in-out translate-y-0 motion-reduce:transition-none hover:translate-y-[-0.15rem] m-[0_.7rem_0_0]"
-                        href={elm.href}
+                        href={elm.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        <i
-                          className={`uil ${elm.icon} before:content-[${elm.unicode}] !text-white text-[1rem]`}
-                        />
+                        <FontAwesomeIcon icon={iconMapping[elm.icon_class]} />
                       </a>
                     ))}
                   </nav>
-                  {/* /.social */}
                 </div>
               </div>
-              {/* /.offcanvas-footer */}
             </div>
-            {/* /.offcanvas-body */}
           </div>
-          {/* /.navbar-collapse */}
           <div className="navbar-other w-full !flex !ml-auto">
             <ul className="navbar-nav !flex-row !items-center !ml-auto">
-              <li className="nav-item dropdown language-select uppercase group">
-                <LanguageSelect color="#3f78e0" />
-              </li>
               <li className="nav-item hidden xl:block lg:block md:block">
                 <Link
                   to={`/contact`}
@@ -83,22 +103,19 @@ export default function Header32({
                   Contact
                 </Link>
               </li>
-
               <li className="nav-item xl:!hidden lg:!hidden">
-                <button className="hamburger offcanvas-nav-btn">
+                <button
+                  className="hamburger offcanvas-nav-btn"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target=".offcanvas"
+                >
                   <span />
                 </button>
               </li>
             </ul>
-            {/* /.navbar-nav */}
           </div>
-          {/* /.navbar-other */}
         </div>
-        {/* /.container */}
       </nav>
-      {/* /.navbar */}
-
-      {/* /.offcanvas */}
     </header>
   );
 }

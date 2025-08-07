@@ -3,7 +3,6 @@ import { useEffect } from "react";
 export default function useStickyNavbar() {
   useEffect(() => {
     const navbar = document.querySelector(".navbar");
-     console.log("Navbar element:", navbar);
     if (!navbar) return;
 
     const handleSticky = () => {

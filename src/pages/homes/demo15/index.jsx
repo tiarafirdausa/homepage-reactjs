@@ -1,5 +1,5 @@
 import Footer13 from "@/components/footers/Footer13";
-import Header16 from "@/components/headers/Header16";
+import Header33 from "@/components/headers/Header33";
 import Contact from "@/components/homes/home-15/Contact";
 import Cta from "@/components/homes/home-15/Cta";
 import Facts from "@/components/homes/home-15/Facts";
@@ -9,20 +9,17 @@ import Process from "@/components/homes/home-15/Process";
 import Team from "@/components/homes/home-15/Team";
 import Testimonials from "@/components/homes/home-15/Testimonials";
 import React from "react";
-
 import MetaComponent from "@/components/common/MetaComponent";
-const metadata = {
-  title:
-    "Demo 15 || Sandbox - Modern & Multipurpose Reactjs Template with Tailwind CSS",
-  description:
-    "Sandbox - Modern & Multipurpose Reactjs Template with Tailwind CSS",
-};
+
 export default function DemoPage15() {
   return (
     <>
-      <MetaComponent meta={metadata} />
+      <MetaComponent />
       <div className="grow shrink-0">
-        <Header16 />
+        <Header33
+          parentClass="relative wrapper bg-soft-primary !bg-[#edf2fc]"
+          navClass="navbar navbar-expand-lg center-nav navbar-light transparent xl:pt-[6px] lg:pt-[6px]"
+        />
         <>
           <section className="wrapper bg-[#21262c] opacity-100">
             <Hero />

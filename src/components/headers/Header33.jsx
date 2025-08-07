@@ -1,39 +1,76 @@
-import React from "react";
-import Nav2 from "./Nav2";
+import React, { useEffect, useState } from "react";
+import Nav from "./Nav";
 import { Link } from "react-router-dom";
-
-import LanguageSelect from "./LanguageSelect";
-import { socialLinks } from "@/data/socials";
+import useStickyNavbar from "@/hooks/useStickyNavbar";
+import { getSettings } from "@/services/settingsService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { iconMapping } from "@/utils/iconMapping";
+import { getActiveSocials } from "@/services/socialService";
+import { BASE_URL } from "@/config/url";
 
 export default function Header33() {
+  const isSticky  = useStickyNavbar();
+  const [logo, setLogo] = useState("/assets/img/logo-dark.png");
+  const [siteTitle, setSiteTitle] = useState("Sandbox");
+  const [socialLinks, setSocialLinks] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const settings = await getSettings();
+        if (settings.appearance && settings.appearance.logo) {
+          setLogo(BASE_URL + settings.appearance.logo);
+        }
+        if (settings.general && settings.general.site_title) {
+          setSiteTitle(settings.general.site_title);
+        }
+
+        const pageSize = 4;
+        const activeSocials = await getActiveSocials(pageSize);
+        setSocialLinks(activeSocials);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <header className="relative wrapper bg-soft-primary !bg-[#edf2fc]">
-      <nav className="navbar navbar-expand-lg center-nav transparent position-absolute navbar-dark xl:pt-[.3rem] lg:pt-[.3rem]">
+      <nav
+        className="navbar navbar-expand-lg center-nav transparent position-absolute navbar-dark xl:pt-[.3rem] lg:pt-[.3rem]"
+        style={{ "--current-color": "#3f78e0" }}
+      >
         <div className="container xl:!flex-row lg:!flex-row !flex-nowrap items-center">
           <div className="navbar-brand w-full">
             <Link to={`/`}>
-              <img
-                className="logo-dark"
-                srcSet="/assets/img/logo@2x.png 2x"
-                alt="image"
-                src="/assets/img/logo.png"
-                width={134}
-                height={26}
-              />
-              <img
-                className="logo-light"
-                srcSet="/assets/img/logo-light@2x.png 2x"
-                alt="image"
-                src="/assets/img/logo-light.png"
-                width={134}
-                height={26}
-              />
+              <div className="flex items-center">
+                <img
+                  className="logo-dark"
+                  src={logo}
+                  alt="site logo"
+                  width={60}
+                  height={60}
+                />
+                <img
+                  className="logo-light"
+                  src={logo}
+                  alt="site logo"
+                  width={60}
+                  height={60}
+                />
+                <span className={`ml-2 ${isSticky ? 'text-dark' : 'text-white'}`}>{siteTitle}</span>
+              </div>
             </Link>
           </div>
-          <div className="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
+          <div
+            className="navbar-collapse offcanvas offcanvas-nav offcanvas-start"
+            tabIndex={-1}
+            id="offcanvas-nav"
+          >
             <div className="offcanvas-header xl:!hidden lg:!hidden flex items-center justify-between flex-row p-6">
               <h3 className="!text-white xl:!text-[1.5rem] !text-[calc(1.275rem_+_0.3vw)] !mb-0">
-                Sandbox
+                {siteTitle}
               </h3>
               <button
                 type="button"
@@ -44,7 +81,7 @@ export default function Header33() {
             </div>
             <div className="offcanvas-body xl:!ml-auto lg:!ml-auto flex flex-col !h-full">
               <ul className="navbar-nav">
-                <Nav2 />
+                <Nav />
               </ul>
               {/* /.navbar-nav */}
               <div className="offcanvas-footer xl:!hidden lg:!hidden">
@@ -58,19 +95,18 @@ export default function Header33() {
                   <br />
                   00 (123) 456 78 90 <br />
                   <nav className="nav social social-white !mt-4">
-                    {socialLinks.map((elm, i) => (
+                    {socialLinks.map((elm) => (
                       <a
-                        key={i}
+                        key={elm.id}
                         className="!text-[#cacaca] text-[1rem] transition-all duration-[0.2s] ease-in-out translate-y-0 motion-reduce:transition-none hover:translate-y-[-0.15rem] m-[0_.7rem_0_0]"
-                        href={elm.href}
+                        href={elm.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        <i
-                          className={`uil ${elm.icon} before:content-[${elm.unicode}] !text-white text-[1rem]`}
-                        />
+                        <FontAwesomeIcon icon={iconMapping[elm.icon_class]} />
                       </a>
                     ))}
                   </nav>
-                  {/* /.social */}
                 </div>
               </div>
               {/* /.offcanvas-footer */}
@@ -80,9 +116,6 @@ export default function Header33() {
           {/* /.navbar-collapse */}
           <div className="navbar-other w-full !flex !ml-auto">
             <ul className="navbar-nav !flex-row !items-center !ml-auto">
-              <li className="nav-item dropdown language-select uppercase group">
-                <LanguageSelect color="#3f78e0" />
-              </li>
               <li className="nav-item hidden xl:block lg:block md:block">
                 <Link
                   to={`/contact`}
@@ -92,7 +125,11 @@ export default function Header33() {
                 </Link>
               </li>
               <li className="nav-item xl:!hidden lg:!hidden">
-                <button className="hamburger offcanvas-nav-btn">
+                <button
+                  className="hamburger offcanvas-nav-btn"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvas-nav"
+                >
                   <span />
                 </button>
               </li>
