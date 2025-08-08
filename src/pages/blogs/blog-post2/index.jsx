@@ -1,20 +1,46 @@
 import BlogSingle from "@/components/blogs/BlogSingle";
-import Sidebar2 from "@/components/blogs/Sidebar2";
+import Sidebar from "@/components/blogs/Sidebar";
 import Footer5 from "@/components/footers/Footer5";
 import Header33 from "@/components/headers/Header33";
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom"; 
+import { getSinglePostBySlug, getPosts } from "@/services/postService";
 import MetaComponent from "@/components/common/MetaComponent";
-const metadata = {
-  title:
-    "Blog Post 02 || Sandbox - Modern & Multipurpose Reactjs Template with Tailwind CSS",
-  description:
-    "Sandbox - Modern & Multipurpose Reactjs Template with Tailwind CSS",
-};
+import { BASE_URL } from "@/config/url";
 export default function BlogPostPage2() {
+  const { slug } = useParams();
+  const [post, setPost] = useState(null);
+  const [allPosts, setAllPosts] = useState([]); 
+
+   useEffect(() => {
+    const fetchData = async () => {
+      if (slug) {
+        try {
+          const [singlePostData, allPostsData] = await Promise.all([
+            getSinglePostBySlug(slug),
+            getPosts(),
+          ]);
+          setPost(singlePostData);
+          setAllPosts(allPostsData.data || []);
+        } catch (error) {
+          console.error(`Gagal mengambil data:`, error);
+        }
+      }
+    };
+    fetchData();
+  }, [slug]);
+
+  if (!post) {
+    return <div>Loading...</div>;
+  }
+
+  const relatedPosts = allPosts.filter(
+    (p) => p.category.id === post.category.id && p.id !== post.id
+  );
+
   return (
     <>
-      <MetaComponent meta={metadata} />
+      <MetaComponent/>
       <div className="grow shrink-0">
         <Header33
           parentClass="relative wrapper bg-soft-primary !bg-[#edf2fc]"
@@ -23,7 +49,7 @@ export default function BlogPostPage2() {
       </div>
       <section
         className="wrapper image-wrapper bg-image bg-overlay !text-white !bg-fixed bg-no-repeat bg-[center_center] bg-cover relative z-0 before:content-[''] before:block before:absolute before:z-[1] before:w-full before:h-full before:left-0 before:top-0 before:bg-[rgba(30,34,40,.5)]"
-        style={{ backgroundImage: "url(/assets/img/photos/bg5.jpg)" }}
+        style={{ backgroundImage: `url(${post.featured_image ? `${BASE_URL}${post.featured_image}` : '/assets/img/photos/bg5.jpg'})`  }}
       >
         <div className="container pt-32 pb-20 xl:pt-40 lg:pt-40 md:pt-40 xl:pb-36 lg:pb-36 md:pb-36 !text-center">
           <div className="flex flex-wrap mx-[-15px]">
@@ -35,17 +61,17 @@ export default function BlogPostPage2() {
                     className="!text-inherit opacity-100"
                     rel="category"
                   >
-                    Teamwork
+                    {post.category.name}
                   </a>
                 </div>
                 {/* /.post-category */}
                 <h1 className="!text-white !text-[calc(1.365rem_+_1.38vw)] font-bold !leading-[1.2] xl:!text-[2.4rem] !mb-4">
-                  Commodo Dolor Bibendum Parturient Cursus Mollis
+                  {post.title}
                 </h1>
                 <ul className="!text-[0.8rem] !text-white m-0 p-0 list-none">
                   <li className="post-date inline-block">
                     <i className="uil uil-calendar-alt pr-[0.2rem] align-[-.05rem] before:content-['\e9ba']" />
-                    <span>5 Jul 2022</span>
+                    <span>{new Date(post.published_at).toLocaleDateString()}</span>
                   </li>
                   <li className="post-author inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0_.4rem] before:rounded-[100%] before:align-[.15rem] before:bg-[#ffffff]">
                     <a
@@ -53,7 +79,7 @@ export default function BlogPostPage2() {
                       href="#"
                     >
                       <i className="uil uil-user pr-[0.2rem] align-[-.05rem] before:content-['\ed6f']" />
-                      <span>By Sandbox</span>
+                      <span>{post.author_name}</span>
                     </a>
                   </li>
                   <li className="post-comments inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0_.4rem] before:rounded-[100%] before:align-[.15rem] before:bg-[#ffffff]">
@@ -90,9 +116,9 @@ export default function BlogPostPage2() {
         <div className="container py-[4.5rem] xl:!py-24 lg:!py-24 md:!py-24">
           <div className="flex flex-wrap mx-[-15px] xl:mx-[-35px] lg:mx-[-20px]">
             <div className="xl:w-8/12 lg:w-8/12 w-full flex-[0_0_auto] !px-[15px] max-w-full md:!px-[20px] lg:!px-[20px] xl:!px-[35px]">
-              <BlogSingle marginTop={false} />
+              <BlogSingle marginTop={false} post={post} relatedPosts={relatedPosts}/>
             </div>
-            <Sidebar2 />
+            <Sidebar />
           </div>
         </div>
       </section>

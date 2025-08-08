@@ -1,21 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 
-export default function Pagination() {
-  const [activePage, setActivePage] = useState(1);
-  const totalPages = 3;
-
-  const handleClick = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setActivePage(page);
-    }
-  };
+export default function Pagination({ totalPages, activePage, onPageChange }) {
+  if (totalPages <= 0) {
+    return null;
+  }
+  
+  const pages = [...Array(totalPages)].map((_, index) => index + 1);
+  
 
   return (
     <ul className="pagination">
       <li className={`page-item ${activePage === 1 ? "disabled" : ""}`}>
         <a
           className="page-link"
-          onClick={() => handleClick(activePage - 1)}
+          onClick={() => onPageChange(activePage - 1)} 
           aria-label="Previous"
         >
           <span aria-hidden="true">
@@ -24,26 +22,23 @@ export default function Pagination() {
         </a>
       </li>
 
-      {[...Array(totalPages)].map((_, index) => {
-        const page = index + 1;
-        return (
-          <li
-            key={page}
-            className={`page-item ${activePage === page ? "active" : ""}`}
-          >
-            <a className="page-link" onClick={() => handleClick(page)}>
-              {page}
-            </a>
-          </li>
-        );
-      })}
+      {pages.map((page) => (
+        <li
+          key={page}
+          className={`page-item ${activePage === page ? "active" : ""}`}
+        >
+          <a className="page-link" onClick={() => onPageChange(page)}>
+            {page}
+          </a>
+        </li>
+      ))}
 
       <li
         className={`page-item ${activePage === totalPages ? "disabled" : ""}`}
       >
         <a
           className="page-link"
-          onClick={() => handleClick(activePage + 1)}
+          onClick={() => onPageChange(activePage + 1)}
           aria-label="Next"
         >
           <span aria-hidden="true">

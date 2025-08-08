@@ -1,10 +1,50 @@
-import { posts3 } from "@/data/blogs";
-import { socialLinks } from "@/data/socials";
-
+import React, { useState, useEffect } from "react";
+import { getRecentPosts } from "@/services/postService";
+import { getTags } from "@/services/tagService";
+import { getCategories } from "@/services/categoryService";
+import { getActiveSocials } from "@/services/socialService";
+import { BASE_URL } from "@/config/url";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { iconMapping } from "@/utils/iconMapping";
 import { Link } from "react-router-dom";
-import React from "react";
 
 export default function Sidebar() {
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [socials, setSocials] = useState([]);
+  const [recentPosts, setRecentPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesData, tagsData, recentPostsData, socialsData] = await Promise.all([
+          getCategories(),
+          getTags(),
+          getRecentPosts(),
+          getActiveSocials(),
+        ]);
+        setCategories(categoriesData.categories || []);
+        setTags(tagsData.tags || []);
+        setRecentPosts(recentPostsData.data || []);
+        setSocials(socialsData || []); 
+      } catch (error) {
+        console.error("Failed to fetch sidebar data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <aside className="xl:w-4/12 lg:w-4/12 w-full flex-[0_0_auto] xl:!px-[35px] lg:!px-[20px] !px-[15px] max-w-full sidebar !mt-8 xl:!mt-6 lg:!mt-6">
+        <div>Loading...</div>
+      </aside>
+    );
+  }
+
   return (
     <aside className="xl:w-4/12 lg:w-4/12 w-full flex-[0_0_auto] xl:!px-[35px] lg:!px-[20px] !px-[15px] max-w-full sidebar !mt-8 xl:!mt-6 lg:!mt-6">
       <div className="widget">
@@ -37,15 +77,9 @@ export default function Sidebar() {
           id elit non mi porta gravida at eget metus.
         </p>
         <nav className="nav social">
-          {socialLinks.map((elm, i) => (
-            <a
-              key={i}
-              className="text-[1rem] transition-all duration-[0.2s] ease-in-out translate-y-0 motion-reduce:transition-none hover:translate-y-[-0.15rem] m-[0_.7rem_0_0]"
-              href={elm.href}
-            >
-              <i
-                className={`text-[1rem] !text-[${elm.color}] before:content-[${elm.unicode}] uil ${elm.icon}`}
-              />
+          {socials.map((item) => (
+            <a key={item.id} className="text-[1rem] transition-all duration-[0.2s] ease-in-out translate-y-0 motion-reduce:transition-none hover:translate-y-[-0.15rem] m-[0_.7rem_0_0]" href={item.url}>
+              <FontAwesomeIcon icon={iconMapping[item.icon_class]} />
             </a>
           ))}
         </nav>
@@ -53,9 +87,9 @@ export default function Sidebar() {
       </div>
       {/* /.widget */}
       <div className="widget !mt-[40px]">
-        <h4 className="widget-title !mb-3">Popular Posts</h4>
+        <h4 className="widget-title !mb-3">Recent Posts</h4>
         <ul className="m-0 p-0 after:content-[''] after:block after:h-0 after:clear-both after:invisible">
-          {posts3.map((post, i) => (
+          {recentPosts.map((post, i) => (
             <li
               key={post.id}
               className={`clear-both block overflow-hidden ${
@@ -63,11 +97,11 @@ export default function Sidebar() {
               }`}
             >
               <figure className="!rounded-[.4rem] float-left w-14 !h-[4.5rem]">
-                <Link to={`/blog-post`}>
+                <Link to={`/post/${post.slug}`}>
                   <img
                     className="!rounded-[.4rem]"
-                    alt="image"
-                    src={post.image}
+                    alt={post.title}
+                    src={`${BASE_URL}${post.featured_image}`}
                     width={100}
                     height={100}
                   />
@@ -77,7 +111,7 @@ export default function Sidebar() {
                 <h6 className="!mb-2">
                   <Link
                     className="!text-[#343f52] hover:!text-[#3f78e0]"
-                    to={`/blog-post`}
+                    to={`/post/${post.slug}`}
                   >
                     {post.title}
                   </Link>
@@ -85,7 +119,7 @@ export default function Sidebar() {
                 <ul className="!text-[0.7rem] !text-[#aab0bc] m-0 p-0 list-none">
                   <li className="post-date inline-block">
                     <i className="uil uil-calendar-alt pr-[0.2rem] align-[-.05rem] before:content-['\e9ba']" />
-                    <span>{post.date}</span>
+                    <span>{new Date(post.published_at).toLocaleDateString()}</span>
                   </li>
                   <li className="post-comments inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0] before:rounded-[100%] before:align-[.15rem] before:bg-[#aab0bc]">
                     <a
@@ -93,7 +127,7 @@ export default function Sidebar() {
                       href="#"
                     >
                       <i className="uil uil-comment pr-[0.2rem] align-[-.05rem] before:content-['\ea54']" />
-                      {post.comments}
+                      0
                     </a>
                   </li>
                 </ul>
@@ -107,110 +141,30 @@ export default function Sidebar() {
       <div className="widget !mt-[40px]">
         <h4 className="widget-title !mb-3">Categories</h4>
         <ul className="pl-0 list-none bullet-primary !text-inherit">
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              Teamwork (21)
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              Ideas (19)
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              Workspace (16)
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              Coding (7)
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              Meeting (12)
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              Business Tips (14)
-            </a>
-          </li>
+          {categories.map((category) => (
+            <li key={category.id} className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
+              <a className="!text-[#60697b] hover:!text-[#3f78e0]" href={`/${category.slug}`}>
+                {category.name}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
       {/* /.widget */}
       <div className="widget !mt-[40px]">
         <h4 className="widget-title !mb-3">Tags</h4>
         <ul className="pl-0 list-none tag-list">
-          <li className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-            <a
-              href="#"
-              className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
-            >
-              Still Life
-            </a>
-          </li>
-          <li className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-            <a
-              href="#"
-              className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
-            >
-              Urban
-            </a>
-          </li>
-          <li className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-            <a
-              href="#"
-              className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
-            >
-              Nature
-            </a>
-          </li>
-          <li className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-            <a
-              href="#"
-              className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
-            >
-              Landscape
-            </a>
-          </li>
-          <li className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-            <a
-              href="#"
-              className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
-            >
-              Macro
-            </a>
-          </li>
-          <li className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-            <a
-              href="#"
-              className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
-            >
-              Fun
-            </a>
-          </li>
-          <li className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-            <a
-              href="#"
-              className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
-            >
-              Workshop
-            </a>
-          </li>
-          <li className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-            <a
-              href="#"
-              className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
-            >
-              Photography
-            </a>
-          </li>
+          {tags.map((tag) => (
+            <li key={tag.id} className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
+              <a href={`/tags/${tag.slug}`} className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]">
+                {tag.name}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
       {/* /.widget */}
-      <div className="widget !mt-[40px]">
+      {/* <div className="widget !mt-[40px]">
         <h4 className="widget-title !mb-3">Archive</h4>
         <ul className="pl-0 list-none bullet-primary !text-inherit">
           <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif">
@@ -239,7 +193,7 @@ export default function Sidebar() {
             </a>
           </li>
         </ul>
-      </div>
+      </div> */}
       {/* /.widget */}
     </aside>
   );

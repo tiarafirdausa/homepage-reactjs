@@ -2,19 +2,46 @@ import Blogs from "@/components/blogs/Blogs";
 import Sidebar from "@/components/blogs/Sidebar";
 import Footer5 from "@/components/footers/Footer5";
 import Header34 from "@/components/headers/Header34";
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import { getPosts, getPostsByCategory } from "@/services/postService";
 import MetaComponent from "@/components/common/MetaComponent";
-const metadata = {
-  title:
-    "Blogs 02 || Sandbox - Modern & Multipurpose Reactjs Template with Tailwind CSS",
-  description:
-    "Sandbox - Modern & Multipurpose Reactjs Template with Tailwind CSS",
-};
-export default function BlogPage2() {
+
+export default function BlogPage2({ slug, type }) {
+  const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const fetchPosts = async (pageIndex = 1) => {
+    setLoading(true);
+    try {
+      let data;
+      const pageSize = 5;
+      if (type === "category" && slug) {
+        data = await getPostsByCategory(slug, { pageIndex });
+      } else {
+        data = await getPosts({ pageIndex, pageSize });
+      }
+      setPosts(data.data);
+      setCurrentPage(data.pageIndex);
+      setTotalPages(Math.ceil(data.total / pageSize));
+    } catch (error) {
+      console.error("Gagal mengambil data post:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts(currentPage);
+  }, [slug, type, currentPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <>
-      <MetaComponent meta={metadata} />
+      <MetaComponent />
       <div className="grow shrink-0">
         <Header34
           parentClass="relative wrapper bg-soft-primary !bg-[#edf2fc]"
@@ -26,7 +53,7 @@ export default function BlogPage2() {
               <div className="flex flex-wrap mx-[-15px]">
                 <div className="md:w-7/12 lg:w-6/12 xl:w-5/12 w-full flex-[0_0_auto] !px-[15px] max-w-full !mx-auto">
                   <h1 className="!text-[calc(1.365rem_+_1.38vw)] font-bold !leading-[1.2] xl:!text-[2.4rem] !mb-3">
-                    Business News
+                    {type === "category" ? `Kategori: ${slug}` : "Semua Post"}
                   </h1>
                   <p className="lead lg:!px-[1.25rem] xl:!px-[1.25rem] xxl:!px-[2rem] !leading-[1.65] text-[0.9rem] font-medium !mb-[.25rem]">
                     Welcome to our journal. Here you can find the latest company
@@ -48,6 +75,10 @@ export default function BlogPage2() {
               <Blogs
                 marginTop={false}
                 parentClass="xl:w-8/12 lg:w-8/12 w-full flex-[0_0_auto] !px-[15px] max-w-full md:!px-[20px] lg:!px-[20px] xl:!px-[35px]"
+                posts={posts}
+                totalPages={totalPages} 
+                activePage={currentPage} 
+                onPageChange={handlePageChange} 
               />
               <Sidebar />
             </div>

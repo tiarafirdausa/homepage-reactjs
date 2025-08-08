@@ -1,39 +1,26 @@
 // src/components/AppRoutes.jsx
-
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { getMenuWithItems } from "@/services/menuService";
 
-// Lazy-loaded components for dynamic routes
-const PageContent = lazy(() => import("@/pages/about/about/index"));
+const PageContent = lazy(() => import("@/pages/projects/single-project3"));
 const PostList = lazy(() => import("@/pages/blogs/blog2/index"));
-const CategoryPage = lazy(() => import("@/pages/blogs/blog2/index"));
-// const MediaList = lazy(() => import("@/components/MediaList"));
-// const MediaCategoryPage = lazy(() => import("@/components/MediaCategoryPage"));
-// const CustomPage = lazy(() => import("@/components/CustomPage"));
-// const NotFoundPage = lazy(() => import("@/pages/utility/404"));
-
-const componentMap = {
-  page: PageContent,
-  post: PostList, 
-  category: CategoryPage,
-//   media: MediaList,
-//   media_category: MediaCategoryPage,
-};
-
+const NotFoundPage = lazy(() => import("@/pages/utility/404-page/index"));
+const PostDetail = lazy(() => import("@/pages/blogs/blog-post2/index"));
 
 const AppRoutes = ({ DemoPage15, SigninPage }) => {
   const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); 
+
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const data = await getMenuWithItems("main-menu"); 
+        const data = await getMenuWithItems("main-menu");
         setMenuItems(data.items);
       } catch (error) {
         console.error("Gagal mengambil menu items:", error);
       } finally {
-        setLoading(false);
+        setLoading(false); 
       }
     };
     fetchMenuItems();
@@ -44,33 +31,34 @@ const AppRoutes = ({ DemoPage15, SigninPage }) => {
   }
 
   return (
-    <Suspense fallback={<div>Loading page...</div>}>
+    <Suspense>
       <Routes>
         <Route path="/" element={<DemoPage15 />} />
         <Route path="/signin" element={<SigninPage />} />
         
-        {menuItems.map((item) => {
-          let path = item.url;
-          if (item.type === 'post' && item.reference_id) {
-            path = `/post/${item.url.replace(/^\//, '')}`;
-          } else if (item.type === 'media' && item.reference_id) {
-            path = `/media/${item.url.replace(/^\//, '')}`;
-          }
+        {menuItems
+          .filter((item) => item.type === 'page')
+          .map((item) => (
+            <Route
+              key={item.id}
+              path={item.url}
+              element={<PageContent slug={item.url.replace(/^\//, '')} />}
+            />
+          ))}
 
-          const Component = componentMap[item.type];
+        {menuItems
+          .filter((item) => item.type === 'post' || item.type === 'category')
+          .map((item) => (
+            <Route
+              key={item.id}
+              path={item.url}
+              element={<PostList type={item.type} slug={item.url.replace(/^\//, '')} />}
+            />
+          ))}
           
-          if (path && Component) {
-            return (
-              <Route
-                key={item.id}
-                path={path}
-                element={<Component itemId={item.reference_id} url={item.url} />}
-              />
-            );
-          }
-          return null;
-        })}
+        <Route path="/post/:slug" element={<PostDetail/>} />
 
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );
