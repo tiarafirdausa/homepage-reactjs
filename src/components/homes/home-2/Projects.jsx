@@ -1,9 +1,12 @@
-import { projects } from "@/data/projects";
 import React from "react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { BASE_URL } from "@/config/url";
 
-export default function Projects() {
+export default function Projects({ projects }) {
+  if (!projects || projects.length === 0) {
+    return <div>Tidak ada proyek yang tersedia.</div>;
+  }
   return (
     <div className="swiper-container blog grid-view !mb-[7rem] xl:!mb-[9rem] lg:!mb-[9rem] md:!mb-[9rem]">
       <Swiper
@@ -34,21 +37,18 @@ export default function Projects() {
           },
         }}
       >
-        {projects.map((image, index) => (
+        {projects.map((project, index) => (
           <SwiperSlide className="swiper-slide" key={index}>
-            <figure className="rounded-[0.4rem]">
+            <figure className="rounded-[0.4rem] h-[22rem] overflow-hidden">
               <img
-                className="!rounded-[0.4rem]"
-                alt={image.alt}
-                width={image.width}
-                height={image.height}
-                src={image.src}
+                className="!rounded-[0.4rem] w-full h-full object-cover"
+                src={`${BASE_URL}${project.media[0].url}`}
+                alt={project.title}
               />
             </figure>
           </SwiperSlide>
         ))}
       </Swiper>
-      {/* /.swiper */}
       <div className="swiper-controls">
         <div className="swiper-navigation">
           <div className="swiper-button swiper-button-prev snbp19"></div>

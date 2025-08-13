@@ -9,7 +9,7 @@ import { iconMapping } from "@/utils/iconMapping";
 import { BASE_URL } from "@/config/url";
 
 export default function Header32({
-  parentClass = "relative wrapper !bg-[#fff8ee]",
+  parentClass = "relative wrapper !bg-[#edf2fc]",
   navClass = "navbar navbar-expand-lg center-nav transparent navbar-light",
 }) {
   useStickyNavbar();
@@ -40,14 +40,12 @@ export default function Header32({
 
   return (
     <header className={parentClass}>
-      {/* Menambahkan style dan warna untuk seluruh navigasi */}
       <nav className={navClass} style={{ "--current-color": "#3f78e0" }}>
         <div className="container xl:!flex-row lg:!flex-row !flex-nowrap items-center">
-          <div className="navbar-brand w-full">
+          <div className="navbar-brand w-full !py-0">
             <Link to={`/`}>
               <div className="flex items-center">
                 <img src={logo} alt="site logo" width={60} height={60} />
-                {/* Menambahkan kelas warna pada judul situs */}
                 <span className="ml-2 !text-[var(--current-color)]">{siteTitle}</span>
               </div>
             </Link>

@@ -7,7 +7,7 @@ import Comment from "./Comment";
 import CommentBox from "./CommentBox";
 import { BASE_URL } from "@/config/url";
 
-export default function BlogSingle({ marginTop = true, post, relatedPosts }) {
+export default function BlogSingle({ marginTop = true, post, relatedPosts, comments }) {
   if (!post) {
     return <div>Loading...</div>;
   }
@@ -33,7 +33,7 @@ export default function BlogSingle({ marginTop = true, post, relatedPosts }) {
                   className="!relative"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
-                <Gallery />
+                <Gallery galleryImages={post.gallery_images} />
               </div>
               <div className="post-footer xl:!flex xl:!flex-row xl:!justify-between lg:!flex lg:!flex-row lg:!justify-between md:!flex md:!flex-row md:!justify-between !items-center !mt-8">
                 <div>
@@ -61,15 +61,16 @@ export default function BlogSingle({ marginTop = true, post, relatedPosts }) {
           <hr />
           <h3 className="!mb-6">You Might Also Like</h3>
           <RelatedBlogs relatedPosts={relatedPosts} />
-          
+
           <hr />
-          <Comment />
+          <Comment comments={comments} />
+
           <hr />
           <h3 className="!mb-3">Would you like to share your thoughts?</h3>
           <p className="!mb-7">
             Your email address will not be published. Required fields are marked *
           </p>
-          <CommentBox />
+          {post.id && <CommentBox postId={post.id} />}
         </div>
       </div>
     </div>

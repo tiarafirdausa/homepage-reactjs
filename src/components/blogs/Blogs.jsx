@@ -122,7 +122,10 @@ export default function Blogs({
                         href="#"
                       >
                         <i className="uil uil-comment pr-[0.2rem] align-[-.05rem] before:content-['\ea54']" />
-                        <span> Comments</span>
+                        <span>
+                          {post.comment_count || 0}{" "}
+                          {post.comment_count === 1 ? "Comment" : "Comments"}
+                        </span>
                       </a>
                     </li>
                     <li className="post-likes !ml-auto inline-block">
@@ -143,8 +146,8 @@ export default function Blogs({
       <div className="wrapper">
         <div className="container py-8">
           <nav className="flex justify-center" aria-label="pagination">
-            <Pagination1 
-              totalPages={totalPages} 
+            <Pagination1
+              totalPages={totalPages}
               activePage={activePage}
               onPageChange={onPageChange}
             />

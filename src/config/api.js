@@ -20,6 +20,18 @@ const API = {
   TAGS: {
     GET_ALL: () => `${BASE_URL}${BASE_API}/tags`,
   },
+  MEDIA: {
+    GET_ALL: () => `${BASE_URL}${BASE_API}/media`,
+    GET_CATEGORIES: () => `${BASE_URL}${BASE_API}/media/categories`,
+  },
+   COMMENTS: {
+    ADD_COMMENT: () => `${BASE_URL}${BASE_API}/comments`,
+    GET_BY_POST_ID: (postId) => `${BASE_URL}${BASE_API}/comments/post/${postId}`,
+    GET_BY_POST_SLUG: (slug) => `${BASE_URL}${BASE_API}/comments/${slug}`,
+    GET_ALL_COMMENTS: () => `${BASE_URL}${BASE_API}/comments`,
+    UPDATE_STATUS: (id) => `${BASE_URL}${BASE_API}/comments/${id}/status`,
+    DELETE_COMMENT: (id) => `${BASE_URL}${BASE_API}/comments/${id}`,
+  },
   SETTINGS: `${BASE_URL}${BASE_API}/settings`,
   SOCIALS: `${BASE_URL}${BASE_API}/socials`,
 };

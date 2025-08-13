@@ -5,6 +5,7 @@ import Header34 from "@/components/headers/Header34";
 import React, { useState, useEffect } from "react";
 import { getPosts, getPostsByCategory } from "@/services/postService";
 import MetaComponent from "@/components/common/MetaComponent";
+import Header32 from "@/components/headers/Header32";
 
 export default function BlogPage2({ slug, type }) {
   const [posts, setPosts] = useState([]);
@@ -43,10 +44,7 @@ export default function BlogPage2({ slug, type }) {
     <>
       <MetaComponent />
       <div className="grow shrink-0">
-        <Header34
-          parentClass="relative wrapper bg-soft-primary !bg-[#edf2fc]"
-          navClass="navbar navbar-expand-lg center-nav navbar-light navbar-bg-light"
-        />
+        <Header32 />
         <section className="section-frame overflow-hidden">
           <div className="wrapper !bg-[#edf2fc]">
             <div className="container py-14 xl:!py-24 lg:!py-24 md:!py-24 !text-center">
@@ -60,13 +58,9 @@ export default function BlogPage2({ slug, type }) {
                     news and business articles.
                   </p>
                 </div>
-                {/* /column */}
               </div>
-              {/* /.row */}
             </div>
-            {/* /.container */}
           </div>
-          {/* /.wrapper */}
         </section>
 
         <div className="wrapper !bg-[#ffffff]">
@@ -76,9 +70,9 @@ export default function BlogPage2({ slug, type }) {
                 marginTop={false}
                 parentClass="xl:w-8/12 lg:w-8/12 w-full flex-[0_0_auto] !px-[15px] max-w-full md:!px-[20px] lg:!px-[20px] xl:!px-[35px]"
                 posts={posts}
-                totalPages={totalPages} 
-                activePage={currentPage} 
-                onPageChange={handlePageChange} 
+                totalPages={totalPages}
+                activePage={currentPage}
+                onPageChange={handlePageChange}
               />
               <Sidebar />
             </div>
