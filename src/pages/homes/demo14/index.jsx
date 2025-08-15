@@ -1,4 +1,5 @@
-import Projects from "@/components/homes/home-14/Projects";
+// import Projects from "@/components/homes/home-14/Projects";
+import Projects from "@/components/homes/home-20/Projects";
 import React from "react";
 
 import MetaComponent from "@/components/common/MetaComponent";
@@ -9,10 +10,7 @@ export default function DemoPage14() {
     <>
       <MetaComponent />
           <div className="grow shrink-0">
-            <Header32
-              parentClass="relative wrapper bg-soft-primary !bg-[#edf2fc]"
-              navClass="navbar navbar-expand-lg center-nav navbar-light navbar-bg-light"
-            />
+            <Header32/>
             <>
               <Projects />
             </>

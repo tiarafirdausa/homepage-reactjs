@@ -1,3 +1,4 @@
+// src/components/headers/Nav.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getMenuWithItems } from "@/services/menuService";
@@ -14,6 +15,7 @@ const buildMenuTree = (items, parentId = null) => {
 export default function Nav({ color = "#3f78e0" }) {
   const { pathname } = useLocation();
   const [menuTree, setMenuTree] = useState([]);
+  const [openDropdowns, setOpenDropdowns] = useState({});
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -26,37 +28,15 @@ export default function Nav({ color = "#3f78e0" }) {
       }
     };
     fetchMenu();
-
-    import("bootstrap").then((Bootstrap) => {
-      const CLASS_NAME = "has-child-dropdown-show";
-      const originalToggle = Bootstrap.Dropdown.prototype.toggle;
-      Bootstrap.Dropdown.prototype.toggle = function () {
-        document.querySelectorAll("." + CLASS_NAME).forEach(function (e) {
-          e.classList.remove(CLASS_NAME);
-        });
-        let dd = this._element
-          .closest(".dropdown")
-          .parentNode.closest(".dropdown");
-        for (; dd && dd !== document; dd = dd.parentNode.closest(".dropdown")) {
-          dd.classList.add(CLASS_NAME);
-        }
-        return originalToggle.call(this);
-      };
-
-      document.querySelectorAll(".dropdown").forEach(function (dd) {
-        dd.addEventListener("hide.bs.dropdown", function (e) {
-          if (this.classList.contains(CLASS_NAME)) {
-            this.classList.remove(CLASS_NAME);
-            e.preventDefault();
-          }
-          e.stopPropagation();
-        });
-      });
-    });
-
-    return () => {
-    };
   }, []);
+
+  // This function toggles the state of a specific dropdown.
+  const handleDropdownToggle = (itemId) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [itemId]: !prev[itemId],
+    }));
+  };
 
   const renderMenuItems = (items) => {
     return (
@@ -75,11 +55,18 @@ export default function Nav({ color = "#3f78e0" }) {
                     item.url === pathname ? "!text-[var(--current-color)]" : ""
                   }`}
                   href="#"
-                  data-bs-toggle="dropdown"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDropdownToggle(item.id);
+                  }}
                 >
                   {item.title}
                 </a>
-                <ul className="dropdown-menu submenu">
+                <ul
+                  className={`dropdown-menu submenu ${
+                    openDropdowns[item.id] ? "show" : ""
+                  }`}
+                >
                   {renderMenuItems(item.children)}
                 </ul>
               </>
@@ -113,11 +100,18 @@ export default function Nav({ color = "#3f78e0" }) {
                   item.url === pathname ? "!text-[var(--current-color)]" : ""
                 }`}
                 href="#"
-                data-bs-toggle="dropdown"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDropdownToggle(item.id);
+                }}
               >
                 {item.title}
               </a>
-              <ul className="dropdown-menu">
+              <ul
+                className={`dropdown-menu ${
+                  openDropdowns[item.id] ? "show" : ""
+                }`}
+              >
                 {renderMenuItems(item.children)}
               </ul>
             </>

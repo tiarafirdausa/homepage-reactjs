@@ -143,7 +143,7 @@ export default function Sidebar() {
         <ul className="pl-0 list-none bullet-primary !text-inherit">
           {categories.map((category) => (
             <li key={category.id} className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-              <a className="!text-[#60697b] hover:!text-[#3f78e0]" href={`/${category.slug}`}>
+              <a className="!text-[#60697b] hover:!text-[#3f78e0]" href={`/kategori/${category.slug}`}>
                 {category.name}
               </a>
             </li>
@@ -163,38 +163,6 @@ export default function Sidebar() {
           ))}
         </ul>
       </div>
-      {/* /.widget */}
-      {/* <div className="widget !mt-[40px]">
-        <h4 className="widget-title !mb-3">Archive</h4>
-        <ul className="pl-0 list-none bullet-primary !text-inherit">
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              February 2019
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              January 2019
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              December 2018
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              November 2018
-            </a>
-          </li>
-          <li className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-            <a className="!text-[#60697b] hover:!text-[#3f78e0]" href="#">
-              October 2018
-            </a>
-          </li>
-        </ul>
-      </div> */}
-      {/* /.widget */}
     </aside>
   );
 }

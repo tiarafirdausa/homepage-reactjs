@@ -1,3 +1,5 @@
+// src/pages/SingleProjectPage3.jsx
+
 import Footer5 from "@/components/footers/Footer5";
 import React, { useState, useEffect } from "react";
 import Header32 from "@/components/headers/Header32";
@@ -32,7 +34,11 @@ export default function SingleProjectPage3({ slug }) {
     return <div>Loading...</div>;
   }
 
-  const sanitizedContent = DOMPurify.sanitize(pageContent.content);
+  const sanitizedContent = DOMPurify.sanitize(pageContent.content, {
+    ADD_TAGS: ['iframe'],
+    ADD_ATTR: ['allowfullscreen', 'webkitallowfullscreen', 'mozallowfullscreen', 'frameborder'],
+  });
+
   const featuredImageSrc = pageContent.featured_image
     ? `${BASE_URL}${pageContent.featured_image}`
     : "/assets/img/photos/bg5.jpg";

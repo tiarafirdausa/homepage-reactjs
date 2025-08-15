@@ -1,3 +1,4 @@
+// src/components/headers/Header32.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useStickyNavbar from "@/hooks/useStickyNavbar";
@@ -14,7 +15,8 @@ export default function Header32({
 }) {
   useStickyNavbar();
   const [logo, setLogo] = useState("/assets/img/logo-dark.png");
-  const [siteTitle, setSiteTitle] = useState("Sandbox");
+  const [siteTitle, setSiteTitle] = useState("");
+  const [shortTitle, setShortTitle] = useState("");
   const [socialLinks, setSocialLinks] = useState([]);
 
   useEffect(() => {
@@ -26,6 +28,9 @@ export default function Header32({
         }
         if (settings.general && settings.general.site_title) {
           setSiteTitle(settings.general.site_title);
+        }
+        if (settings.general && settings.general.short_title) {
+          setShortTitle(settings.general.short_title);
         }
 
         const pageSize = 4;
@@ -46,14 +51,16 @@ export default function Header32({
             <Link to={`/`}>
               <div className="flex items-center">
                 <img src={logo} alt="site logo" width={60} height={60} />
-                <span className="ml-2 !text-[var(--current-color)]">{siteTitle}</span>
+                <span className="ml-2 nav-link !text-[#000000]] hover:!text-[#000000]]">
+                  {shortTitle}
+                </span>
               </div>
             </Link>
           </div>
           <div className="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
             <div className="offcanvas-header xl:!hidden lg:!hidden flex items-center justify-between flex-row p-6">
               <h3 className="!text-white xl:!text-[1.5rem] !text-[calc(1.275rem_+_0.3vw)] !mb-0">
-                {siteTitle}
+                {shortTitle}
               </h3>
               <button
                 type="button"
@@ -95,10 +102,10 @@ export default function Header32({
             <ul className="navbar-nav !flex-row !items-center !ml-auto">
               <li className="nav-item hidden xl:block lg:block md:block">
                 <Link
-                  to={`/contact`}
+                  to={`http://localhost:5173/sign-in`}
                   className="btn btn-sm btn-primary !text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:!border-[#3f78e0] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0] !rounded-[50rem] hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)]"
                 >
-                  Contact
+                  Sign-in
                 </Link>
               </li>
               <li className="nav-item xl:!hidden lg:!hidden">

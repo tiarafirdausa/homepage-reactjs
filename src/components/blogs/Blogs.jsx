@@ -75,7 +75,7 @@ export default function Blogs({
                   <div className="post-header !mb-[.9rem]">
                     <div className="inline-flex !mb-[.4rem] uppercase !tracking-[0.02rem] text-[0.7rem] font-bold !text-[#aab0bc] relative align-top !pl-[1.4rem] before:content-[''] before:absolute before:inline-block before:translate-y-[-60%] before:w-3 before:h-[0.05rem] before:left-0 before:top-2/4 before:bg-[#3f78e0]">
                       <a
-                        href={`/${post.category.slug}`}
+                        href={`/kategori/${post.category.slug}`}
                         className="hover"
                         rel="category"
                       >

@@ -1,5 +1,8 @@
+// src/App.jsx
+
 import React, { lazy, Suspense, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import "photoswipe/dist/photoswipe.css";
 import Context from "@/context/Context";
 import SearchModal from "@/components/modals/SearchModal";
 import InfoModal from "@/components/modals/InfoModal";
@@ -60,12 +63,11 @@ function App() {
 
   return (
     <Context>
-        <AppRoutes DemoPage15={DemoPage15} SigninPage={SigninPage} />
-
-        <SearchModal />
-        <InfoModal />
-        <ProgressWrap />
-        <ScrollTopBehaviour />
+      <AppRoutes DemoPage15={DemoPage15} SigninPage={SigninPage} />
+      <SearchModal />
+      <InfoModal />
+      <ProgressWrap />
+      <ScrollTopBehaviour />
     </Context>
   );
 }

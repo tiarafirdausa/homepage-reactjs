@@ -1,7 +1,6 @@
 import React from "react";
 import GalleryComponent from "../blogs/Gallery";
 export default function ProjectDetails3({ content, galleryImages = [] }) {
-
   return (
     <div className={`blog single`}>
       <div className="card">

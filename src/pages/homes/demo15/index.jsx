@@ -1,5 +1,4 @@
 // src/pages/homes/demo15/index.jsx
-import Footer13 from "@/components/footers/Footer13";
 import Contact from "@/components/homes/home-15/Contact";
 import Hero from "@/components/homes/home-15/Hero";
 import Process from "@/components/homes/home-15/Process";

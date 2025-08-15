@@ -2,6 +2,7 @@
 
 import React from "react";
 import RelatedBlogs from "./RelatedBlogs";
+import DOMPurify from "dompurify";
 import Gallery from "./Gallery";
 import Comment from "./Comment";
 import CommentBox from "./CommentBox";
@@ -11,6 +12,11 @@ export default function BlogSingle({ marginTop = true, post, relatedPosts, comme
   if (!post) {
     return <div>Loading...</div>;
   }
+
+  const sanitizedContent = DOMPurify.sanitize(post.content, {
+    ADD_TAGS: ['iframe'],
+    ADD_ATTR: ['allowfullscreen', 'webkitallowfullscreen', 'mozallowfullscreen', 'frameborder'],
+  });
 
   return (
     <div className={`blog single ${marginTop ? "!mt-[-7rem]" : ""} `}>
@@ -31,7 +37,7 @@ export default function BlogSingle({ marginTop = true, post, relatedPosts, comme
               <div className="relative !mb-5">
                 <div
                   className="!relative"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizedContent }}
                 />
                 <Gallery galleryImages={post.gallery_images} />
               </div>
