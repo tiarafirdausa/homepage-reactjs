@@ -6,7 +6,7 @@ import { getSettings } from "@/services/settingsService";
 import { getActiveSocials } from "@/services/socialService";
 import { getMenuWithItems } from "@/services/menuService";
 
-export default function Footer5({ hasMarginTop = true }) {
+export default function Footer5({ hasMarginTop = false }) {
   const [settings, setSettings] = useState(null);
   const [socialLinks, setSocialLinks] = useState([]);
   const [footerLinks, setFooterLinks] = useState([]);
@@ -67,14 +67,7 @@ export default function Footer5({ hasMarginTop = true }) {
           {/* Copyright Section */}
           <div className="md:w-4/12 xl:w-3/12 lg:w-3/12 w-full flex-[0_0_auto] !px-[15px] max-w-full xl:!mt-0 lg:!mt-0 !mt-[30px]">
             <div className="widget !text-[#cacaca]">
-              <img
-                className="!mb-4"
-                srcSet="/assets/img/logo-light@2x.png 2x"
-                alt="logo"
-                src="/assets/img/logo-light.png"
-                width={134}
-                height={26}
-              />
+              <p className="font-bold text-lg">{siteTitle}</p>
               <p className="!mb-4">
                 © {new Date().getFullYear()} {siteTitle}.
                 <br className="hidden xl:block lg:block !text-[#cacaca]" />

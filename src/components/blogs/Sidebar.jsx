@@ -21,7 +21,7 @@ export default function Sidebar() {
         const [categoriesData, tagsData, recentPostsData, socialsData] = await Promise.all([
           getCategories(),
           getTags(),
-          getRecentPosts(),
+          getRecentPosts({ pageSize: 3 }),
           getActiveSocials(),
         ]);
         setCategories(categoriesData.categories || []);

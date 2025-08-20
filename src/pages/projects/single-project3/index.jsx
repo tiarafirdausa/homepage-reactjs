@@ -8,6 +8,7 @@ import { getPageBySlug } from "@/services/pagesService";
 import MetaComponent from "@/components/common/MetaComponent";
 import DOMPurify from "dompurify";
 import { BASE_URL } from "@/config/url";
+import Header33 from "@/components/headers/Header33";
 
 export default function SingleProjectPage3({ slug }) {
   const [pageContent, setPageContent] = useState(null);
@@ -51,7 +52,7 @@ export default function SingleProjectPage3({ slug }) {
         image={pageContent.featured_image}
       />
       <div className="grow shrink-0">
-        <Header32 />
+        <Header33 />
       </div>
 
       <section

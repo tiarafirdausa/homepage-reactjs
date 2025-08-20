@@ -68,7 +68,7 @@ export default function BlogPostPage2() {
         image={post.featured_image}
       />
       <div className="grow shrink-0">
-        <Header32/>
+        <Header33/>
       </div>
       <section
         className="wrapper image-wrapper bg-image bg-overlay !text-white !bg-fixed bg-no-repeat bg-[center_center] bg-cover relative z-0 before:content-[''] before:block before:absolute before:z-[1] before:w-full before:h-full before:left-0 before:top-0 before:bg-[rgba(30,34,40,.5)]"

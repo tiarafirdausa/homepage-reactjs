@@ -12,7 +12,6 @@ const API = {
     GET_ALL_POST: () => `${BASE_URL}${BASE_API}/posts`,
     GET_BY_SLUG: (slug) => `${BASE_URL}${BASE_API}/posts/${slug}`,
     GET_BY_CATEGORY: (slug) => `${BASE_URL}${BASE_API}/posts/category/${slug}`,
-    GET_RECENT_POSTS: () => `${BASE_URL}${BASE_API}/posts?sort[key]=published_at&sort[order]=desc&pageSize=3`,
   },
   CATEGORIES: {
     GET_ALL: () => `${BASE_URL}${BASE_API}/categories`,
@@ -31,6 +30,11 @@ const API = {
     GET_ALL_COMMENTS: () => `${BASE_URL}${BASE_API}/comments`,
     UPDATE_STATUS: (id) => `${BASE_URL}${BASE_API}/comments/${id}/status`,
     DELETE_COMMENT: (id) => `${BASE_URL}${BASE_API}/comments/${id}`,
+  },
+  MODULS: {
+    GET_ALL: () => `${BASE_URL}${BASE_API}/moduls`,
+    GET_BY_ID: (id) => `${BASE_URL}${BASE_API}/moduls/${id}`,
+    GET_HOME_MODULS: () => `${BASE_URL}${BASE_API}/moduls/home`,
   },
   SETTINGS: `${BASE_URL}${BASE_API}/settings`,
   SOCIALS: `${BASE_URL}${BASE_API}/socials`,

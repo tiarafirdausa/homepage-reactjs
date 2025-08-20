@@ -36,12 +36,35 @@ export const getSinglePostBySlug = async (slug) => {
   }
 };
 
-export const getRecentPosts = async () => {
+export const getRecentPosts = async (params = {}) => {
   try {
-    const response = await axios.get(API.POSTS.GET_RECENT_POSTS());
-    return response.data;
+    const defaultParams = {
+      "sort[key]": "published_at",
+      "sort[order]": "desc",
+      ...params,
+    };
+    return getPosts(defaultParams);
   } catch (error) {
     console.error("Error fetching recent posts:", error);
+    throw error;
+  }
+};
+
+export const getPopularPosts = async (params = {}) => {
+  try {
+    const defaultParams = {
+      "sort[key]": "hits",
+      "sort[order]": "desc",
+      ...params,
+    };
+    const baseUrl = API.POSTS.GET_ALL_POST();
+    const queryString = new URLSearchParams(defaultParams).toString();
+    const url = `${baseUrl}?${queryString}`;
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching popular posts:", error);
     throw error;
   }
 };
