@@ -13,7 +13,7 @@ export default function Blogs({
   onPageChange,
 }) {
   return (
-    <div className={parentClass}>
+    <div className={`${parentClass} blog-page`}>
       <div className={`blog classic-view ${marginTop ? "!mt-[-7rem]" : ""} `}>
         {posts &&
           posts.map((post) => (

@@ -49,37 +49,39 @@ export default function Hero() {
             nextEl: ".snbn7",
           }}
         >
-          {heroSlides.map((slide, index) => (
-            <SwiperSlide
-              key={index}
-              className="swiper-slide max-h-full bg-overlay bg-overlay-400 bg-[#21262c] opacity-100 bg-image !bg-cover !bg-[center_center] !h-[750px] before:content-[''] before:block before:absolute before:z-[1] before:w-full before:h-full before:left-0 before:top-0 before:bg-[rgba(30,34,40,.4)]"
-              style={{
-                backgroundImage: `url(${BASE_URL}${slide.featured_image})`,
-              }}
-            >
-              <div className="container !h-full">
-                <div className="flex flex-wrap mx-[-15px] !h-full">
-                  <div className="md:w-10/12 md:!ml-[8.33333333%] lg:w-7/12 lg:!ml-0 xl:w-6/12 xxl:w-5/12 w-full flex-[0_0_auto] !px-[15px] max-w-full text-center lg:text-left xl:text-left justify-center self-center items-start">
-                    <h2 className="xl:!text-[2.8rem] !leading-[1.2] font-bold !text-[calc(1.405rem_+_1.86vw)] !mb-4 !text-white animate__animated animate__slideInDown animate__delay-1s">
-                      {slide.title}
-                    </h2>
-                    <p
-                      className="lead text-[1.15rem] leading-normal !mb-7 !text-white animate__animated animate__slideInRight animate__delay-2s"
-                      dangerouslySetInnerHTML={{ __html: slide.excerpt }}
-                    />
-                    <div className="animate__animated animate__slideInUp animate__delay-3s">
-                      <Link
-                        to={`/blog`}
-                        className="btn btn-lg btn-outline-white !text-white bg-[#ffffff] !border-white !border-[2px] hover:!text-[#343f52] hover:bg-[#ffffff] hover:border-white focus:shadow-[rgba(255,255,255,1)] active:!text-[#343f52] active:bg-[#ffffff] active:border-white disabled:text-white disabled:bg-transparent disabled:border-white !rounded-[50rem]"
-                      >
-                        Read More
-                      </Link>
+          {heroSlides
+            .filter((slide) => slide.featured_image)
+            .map((slide, index) => (
+              <SwiperSlide
+                key={index}
+                className="swiper-slide max-h-full bg-overlay bg-overlay-400 bg-[#21262c] opacity-100 bg-image !bg-cover !bg-[center_center] !h-[750px] before:content-[''] before:block before:absolute before:z-[1] before:w-full before:h-full before:left-0 before:top-0 before:bg-[rgba(30,34,40,.4)]"
+                style={{
+                  backgroundImage: `url(${BASE_URL}${slide.featured_image})`,
+                }}
+              >
+                <div className="container !h-full">
+                  <div className="flex flex-wrap mx-[-15px] !h-full">
+                    <div className="md:w-10/12 md:!ml-[8.33333333%] lg:w-7/12 lg:!ml-0 xl:w-6/12 xxl:w-5/12 w-full flex-[0_0_auto] !px-[15px] max-w-full text-center lg:text-left xl:text-left justify-center self-center items-start">
+                      <h2 className="lg:!text-3xl xl:!text-4xl !leading-[1.2] font-bold !mb-4 !text-white animate__animated animate__slideInDown animate__delay-1s">
+                        {slide.title}
+                      </h2>
+                      <p
+                        className="lead text-sm leading-normal !mb-7 !text-white animate__animated animate__slideInRight animate__delay-2s"
+                        dangerouslySetInnerHTML={{ __html: slide.excerpt }}
+                      />
+                      <div className="animate__animated animate__slideInUp animate__delay-3s">
+                        <Link
+                          to={`/blog`}
+                          className="btn btn-lg btn-outline-white !text-white bg-[#ffffff] !border-white !border-[2px] hover:!text-[#343f52] hover:bg-[#ffffff] hover:border-white focus:shadow-[rgba(255,255,255,1)] active:!text-[#343f52] active:bg-[#ffffff] active:border-white disabled:text-white disabled:bg-transparent disabled:border-white !rounded-[50rem]"
+                        >
+                          Read More
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
+              </SwiperSlide>
+            ))}
         </Swiper>
         <div className="swiper-controls">
           <div className="swiper-navigation">
