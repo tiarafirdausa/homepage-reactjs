@@ -1,4 +1,14 @@
 @import "tailwindcss";
+@import "photoswipe/dist/photoswipe.css";
+
+/* Terapkan gaya pemusatan pada elemen gambar */
+.pswp__img {
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  width: auto !important;
+  height: auto !important;
+}
+
 @theme {
   --font-IBMPlexSerif: "IBM Plex Serif", "serif";
   --font-SpaceGrotesk: "Space Grotesk", "sans-serif";

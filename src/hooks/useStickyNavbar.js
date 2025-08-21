@@ -1,12 +1,19 @@
-import { useEffect } from "react";
+// src/hooks/useStickyNavbar.jsx
+
+import { useEffect, useState } from "react";
 
 export default function useStickyNavbar() {
+  const [isSticky, setIsSticky] = useState(false);
+
   useEffect(() => {
     const navbar = document.querySelector(".navbar");
     if (!navbar) return;
 
     const handleSticky = () => {
-      if (window.scrollY > 120) {
+      const isStickyNow = window.scrollY > 120;
+      setIsSticky(isStickyNow);
+
+      if (isStickyNow) {
         navbar.classList.add("fixed", "navbar-clone");
         if (navbar.classList.contains("transparent") && navbar.classList.contains("navbar-dark")) {
           navbar.classList.remove("navbar-dark");
@@ -30,4 +37,6 @@ export default function useStickyNavbar() {
     window.addEventListener("scroll", handleSticky);
     return () => window.removeEventListener("scroll", handleSticky);
   }, []);
+
+  return isSticky;
 }

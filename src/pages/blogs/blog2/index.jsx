@@ -47,7 +47,7 @@ export default function BlogPage2({ slug: propSlug, type }) {
     <>
       <MetaComponent />
       <div className="grow shrink-0">
-        <Header32 />
+        <Header32 colorClass="!bg-[#edf2fc]"/>
         <section className="section-frame overflow-hidden">
           <div className="wrapper !bg-[#edf2fc]">
             <div className="container py-14 xl:!py-24 lg:!py-24 md:!py-24 !text-center">

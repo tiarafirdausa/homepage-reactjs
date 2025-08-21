@@ -9,9 +9,9 @@ import { getActiveSocials } from "@/services/socialService";
 import { BASE_URL } from "@/config/url";
 
 export default function Header33() {
-  const isSticky  = useStickyNavbar();
+  const isSticky = useStickyNavbar();
   const [logo, setLogo] = useState("/assets/img/logo-dark.png");
-  const [siteTitle, setSiteTitle] = useState("Sandbox");
+  const [shortTitle, setShortTitle] = useState("");
   const [socialLinks, setSocialLinks] = useState([]);
 
   useEffect(() => {
@@ -21,8 +21,8 @@ export default function Header33() {
         if (settings.appearance && settings.appearance.logo) {
           setLogo(BASE_URL + settings.appearance.logo);
         }
-        if (settings.general && settings.general.site_title) {
-          setSiteTitle(settings.general.site_title);
+        if (settings.general && settings.general.short_title) {
+          setShortTitle(settings.general.short_title);
         }
 
         const pageSize = 4;
@@ -45,21 +45,12 @@ export default function Header33() {
           <div className="navbar-brand w-full">
             <Link to={`/`}>
               <div className="flex items-center">
-                <img
-                  className="logo-dark"
-                  src={logo}
-                  alt="site logo"
-                  width={60}
-                  height={60}
-                />
-                <img
-                  className="logo-light"
-                  src={logo}
-                  alt="site logo"
-                  width={60}
-                  height={60}
-                />
-                <span className={`ml-2 ${isSticky ? 'text-dark' : 'text-white'}`}>{siteTitle}</span>
+                <img src={logo} alt="site logo" width={60} height={60} />
+                <span
+                  className={`ml-2 font-bold ${isSticky ? "text-black" : "text-white"}`}
+                >
+                  {shortTitle}
+                </span>
               </div>
             </Link>
           </div>
@@ -70,7 +61,7 @@ export default function Header33() {
           >
             <div className="offcanvas-header xl:!hidden lg:!hidden flex items-center justify-between flex-row p-6">
               <h3 className="!text-white xl:!text-[1.5rem] !text-[calc(1.275rem_+_0.3vw)] !mb-0">
-                {siteTitle}
+                {shortTitle}
               </h3>
               <button
                 type="button"

@@ -2,7 +2,6 @@
 
 import React, { lazy, Suspense, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import "photoswipe/dist/photoswipe.css";
 import Context from "@/context/Context";
 import SearchModal from "@/components/modals/SearchModal";
 import InfoModal from "@/components/modals/InfoModal";

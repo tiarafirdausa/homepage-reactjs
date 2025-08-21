@@ -2,7 +2,6 @@
 
 import Footer5 from "@/components/footers/Footer5";
 import React, { useState, useEffect } from "react";
-import Header32 from "@/components/headers/Header32";
 import ProjectDetails3 from "@/components/projects/ProjectDetails3";
 import { getPageBySlug } from "@/services/pagesService";
 import MetaComponent from "@/components/common/MetaComponent";

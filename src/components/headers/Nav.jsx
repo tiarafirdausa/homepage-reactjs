@@ -12,6 +12,18 @@ const buildMenuTree = (items, parentId = null) => {
     }));
 };
 
+const hasActiveChild = (items, pathname) => {
+  return items.some((item) => {
+    if (item.url === pathname) {
+      return true;
+    }
+    if (item.children.length > 0) {
+      return hasActiveChild(item.children, pathname);
+    }
+    return false;
+  });
+};
+
 export default function Nav({ color = "#3f78e0" }) {
   const { pathname } = useLocation();
   const [menuTree, setMenuTree] = useState([]);
@@ -30,7 +42,6 @@ export default function Nav({ color = "#3f78e0" }) {
     fetchMenu();
   }, []);
 
-  // This function toggles the state of a specific dropdown.
   const handleDropdownToggle = (itemId) => {
     setOpenDropdowns((prev) => ({
       ...prev,
@@ -38,66 +49,32 @@ export default function Nav({ color = "#3f78e0" }) {
     }));
   };
 
-  const renderMenuItems = (items) => {
-    return (
-      <ul className="pl-0 list-none">
-        {items.map((item) => (
-          <li
-            key={item.id}
-            className={`nav-item ${
-              item.children.length > 0 ? "dropdown" : ""
-            }`}
-          >
-            {item.children.length > 0 ? (
-              <>
-                <a
-                  className={`dropdown-item hover:!text-[var(--current-color)] dropdown-toggle ${
-                    item.url === pathname ? "!text-[var(--current-color)]" : ""
-                  }`}
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleDropdownToggle(item.id);
-                  }}
-                >
-                  {item.title}
-                </a>
-                <ul
-                  className={`dropdown-menu submenu ${
-                    openDropdowns[item.id] ? "show" : ""
-                  }`}
-                >
-                  {renderMenuItems(item.children)}
-                </ul>
-              </>
-            ) : (
-              <Link
-                className={`dropdown-item hover:!text-[var(--current-color)] ${
-                  item.url === pathname ? "!text-[var(--current-color)]" : ""
-                }`}
-                to={item.url}
-              >
-                {item.title}
-              </Link>
-            )}
-          </li>
-        ))}
-      </ul>
-    );
-  };
+  const isActiveLink = (item) => {
+    if (item.url === pathname) {
+      return true;
+    }
+    if (item.children.length > 0) {
+      return hasActiveChild(item.children, pathname);
+    }
+    return false;
+  };
 
+
+const renderMenuItems = (items) => {
   return (
-    <ul className="navbar-nav" style={{ "--current-color": color }}>
-      {menuTree.map((item) => (
+    <ul className="pl-0 list-none">
+      {items.map((item) => (
         <li
           key={item.id}
-          className={`nav-item ${item.children.length > 0 ? "dropdown" : ""}`}
+          className={`nav-item ${
+            item.children.length > 0 ? "dropdown" : ""
+          }`}
         >
           {item.children.length > 0 ? (
             <>
               <a
-                className={`nav-link dropdown-toggle hover:!text-[var(--current-color)] after:!text-[var(--current-color)] ${
-                  item.url === pathname ? "!text-[var(--current-color)]" : ""
+                className={`dropdown-item hover:!text-[var(--current-color)] dropdown-toggle ${
+                  isActiveLink(item) ? "!text-[var(--current-color)] after:!text-[var(--current-color)]" : ""
                 }`}
                 href="#"
                 onClick={(e) => {
@@ -108,7 +85,7 @@ export default function Nav({ color = "#3f78e0" }) {
                 {item.title}
               </a>
               <ul
-                className={`dropdown-menu ${
+                className={`dropdown-menu submenu ${
                   openDropdowns[item.id] ? "show" : ""
                 }`}
               >
@@ -117,8 +94,8 @@ export default function Nav({ color = "#3f78e0" }) {
             </>
           ) : (
             <Link
-              className={`nav-link hover:!text-[var(--current-color)] ${
-                item.url === pathname ? "!text-[var(--current-color)]" : ""
+              className={`dropdown-item hover:!text-[var(--current-color)] ${
+                isActiveLink(item) ? "!text-[var(--current-color)]" : ""
               }`}
               to={item.url}
             >
@@ -129,4 +106,49 @@ export default function Nav({ color = "#3f78e0" }) {
       ))}
     </ul>
   );
+};
+
+return (
+  <ul className="navbar-nav" style={{ "--current-color": color }}>
+    {menuTree.map((item) => (
+      <li
+        key={item.id}
+        className={`nav-item ${item.children.length > 0 ? "dropdown" : ""}`}
+      >
+        {item.children.length > 0 ? (
+          <>
+            <a
+              className={`nav-link dropdown-toggle hover:!text-[var(--current-color)] ${
+                isActiveLink(item) ? "!text-[var(--current-color)] after:!text-[var(--current-color)]" : ""
+              }`}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleDropdownToggle(item.id);
+              }}
+            >
+              {item.title}
+            </a>
+            <ul
+              className={`dropdown-menu ${
+                openDropdowns[item.id] ? "show" : ""
+              }`}
+            >
+              {renderMenuItems(item.children)}
+            </ul>
+          </>
+        ) : (
+          <Link
+            className={`nav-link hover:!text-[var(--current-color)] ${
+              isActiveLink(item) ? "!text-[var(--current-color)]" : ""
+            }`}
+            to={item.url}
+          >
+            {item.title}
+          </Link>
+        )}
+      </li>
+    ))}
+  </ul>
+);
 }

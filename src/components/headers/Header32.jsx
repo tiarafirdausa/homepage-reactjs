@@ -10,12 +10,12 @@ import { iconMapping } from "@/utils/iconMapping";
 import { BASE_URL } from "@/config/url";
 
 export default function Header32({
-  parentClass = "relative wrapper !bg-[#edf2fc]",
+  parentClass = "relative wrapper",
   navClass = "navbar navbar-expand-lg center-nav transparent navbar-light",
+  colorClass = "!bg-[#ffffff]" 
 }) {
   useStickyNavbar();
   const [logo, setLogo] = useState("/assets/img/logo-dark.png");
-  const [siteTitle, setSiteTitle] = useState("");
   const [shortTitle, setShortTitle] = useState("");
   const [socialLinks, setSocialLinks] = useState([]);
 
@@ -25,9 +25,6 @@ export default function Header32({
         const settings = await getSettings();
         if (settings.appearance && settings.appearance.logo) {
           setLogo(BASE_URL + settings.appearance.logo);
-        }
-        if (settings.general && settings.general.site_title) {
-          setSiteTitle(settings.general.site_title);
         }
         if (settings.general && settings.general.short_title) {
           setShortTitle(settings.general.short_title);
@@ -44,7 +41,7 @@ export default function Header32({
   }, []);
 
   return (
-    <header className={parentClass}>
+    <header className={`${parentClass} ${colorClass}`}>
       <nav className={navClass} style={{ "--current-color": "#3f78e0" }}>
         <div className="container xl:!flex-row lg:!flex-row !flex-nowrap items-center">
           <div className="navbar-brand w-full !py-0">
