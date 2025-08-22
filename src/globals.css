@@ -1,12 +1,93 @@
 @import "tailwindcss";
 @import "photoswipe/dist/photoswipe.css";
 
-/* Terapkan gaya pemusatan pada elemen gambar */
+.pswp {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Pastikan properti ini ada */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Penengahan vertikal */
+}
+
+.pswp__container {
+    width: 100%;
+    height: 100%;
+    display: flex; /* Enable flexbox for image centering within container (redundant with .pswp but can help ensure) */
+    justify-content: center;
+    align-items: center;
+}
+
 .pswp__img {
-  max-width: 90vw !important;
-  max-height: 90vh !important;
-  width: auto !important;
-  height: auto !important;
+    max-width: 80vw;
+    max-height: 80vh;
+    object-fit: contain;
+    margin: auto
+}
+
+@media (min-width: 768px) {
+    .pswp__img {
+        /* Untuk tablet dan layar kecil */
+        max-width: 80vw;
+    }
+}
+
+@media (min-width: 1024px) {
+    .pswp__img {
+        /* Untuk laptop dan desktop */
+        max-width: 70vw;
+    }
+}
+
+
+@media (min-width: 1440px) {
+    .pswp__img {
+        /* Untuk layar besar */
+        max-width: 600px; /* Gunakan nilai piksel yang lebih konservatif */
+    }
+}
+/* Buat semua <p> di dalam classic-view menjadi kontainer fleksibel */
+.classic-view p {
+  display: flex;
+  flex-wrap: wrap; /* Memastikan media bisa pindah ke baris baru di layar kecil */
+  gap: 15px; /* Memberikan jarak antar media */
+  align-items: center; /* Meratakan media secara vertikal */
+}
+
+/* Terapkan aturan responsif untuk media di dalamnya */
+.classic-view img,
+.classic-view video,
+.classic-view iframe {
+  width: 100% !important; /* Memastikan lebar mengisi kontainer */
+  max-width: 500px !important; /* Batasi lebar maksimum agar tidak terlalu besar */
+  height: auto !important; /* Jaga rasio aspek tetap utuh */
+  flex: 1; /* Biarkan media mengambil ruang yang sama */
+}
+
+/* Pastikan semua media yang berdiri sendiri juga responsif */
+.classic-view > img,
+.classic-view > video,
+.classic-view > iframe {
+  max-width: 100% !important;
+}
+
+/* Aturan ini hanya akan berlaku jika elemen 'body' memiliki class 'blog-page' */
+.blog-page .classic-view img,
+.blog-page .classic-view video,
+.blog-page .classic-view iframe {
+  width: 100% !important; 
+  max-width: 1000px !important;
+  height: auto !important; 
+  flex: 1; 
+}
+
+/* Pastikan semua media yang berdiri sendiri juga responsif */
+.blog-page .classic-view > img,
+.blog-page .classic-view > video,
+.blog-page .classic-view > iframe {
+  max-width: 1000px !important;
 }
 
 @theme {

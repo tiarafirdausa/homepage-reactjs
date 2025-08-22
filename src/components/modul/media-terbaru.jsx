@@ -8,7 +8,7 @@ import { Gallery, Item } from "react-photoswipe-gallery";
 import { getMedia } from "@/services/mediaService";
 import { BASE_URL } from "@/config/url";
 
-export default function Media() {
+export default function Media({ title }) {
   const [mediaCollections, setMediaCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,11 +51,10 @@ export default function Media() {
           <div className="flex flex-wrap mx-[-15px]">
             <div className="lg:w-10/12 xl:w-8/12 w-full flex-[0_0_auto] !px-[15px] max-w-full !mx-auto !text-center">
               <h2 className="!text-[0.8rem] !tracking-[0.02rem] uppercase !text-[#aab0bc] !mb-3 !leading-[1.35]">
-                Latest Media
+                { title }
               </h2>
               <h3 className="xl:!text-[1.9rem] !text-[calc(1.315rem_+_0.78vw)] !leading-[1.25] !mb-10 xxl:!px-10">
-                Check out some of our awesome projects with creative ideas and great
-                design.
+                Jelajahi galeri kami untuk melihat dokumentasi visual dari proyek dan acara-acara kami.
               </h3>
             </div>
           </div>

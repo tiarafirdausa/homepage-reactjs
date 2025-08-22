@@ -1,3 +1,5 @@
+// src/components/blogs/Sidebar.jsx
+
 import React, { useState, useEffect } from "react";
 import { getRecentPosts } from "@/services/postService";
 import { getTags } from "@/services/tagService";
@@ -17,7 +19,7 @@ export default function Sidebar() {
   const [recentPosts, setRecentPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const [categoriesData, tagsData, recentPostsData, socialsData, settingsData] = await Promise.all([
@@ -30,7 +32,7 @@ export default function Sidebar() {
         setCategories(categoriesData.categories || []);
         setTags(tagsData.tags || []);
         setRecentPosts(recentPostsData.data || []);
-        setSocials(socialsData || []); 
+        setSocials(socialsData || []);
         setSettings(settingsData.general || {});
       } catch (error) {
         console.error("Failed to fetch sidebar data:", error);
@@ -143,9 +145,9 @@ export default function Sidebar() {
         <ul className="pl-0 list-none bullet-primary !text-inherit">
           {categories.map((category) => (
             <li key={category.id} className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-              <a className="!text-[#60697b] hover:!text-[#3f78e0]" href={`/kategori/${category.slug}`}>
+              <Link className="!text-[#60697b] hover:!text-[#3f78e0]" to={`/kategori/${category.slug}`}>
                 {category.name}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -156,9 +158,9 @@ export default function Sidebar() {
         <ul className="pl-0 list-none tag-list">
           {tags.map((tag) => (
             <li key={tag.id} className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-              <a href={`/tags/${tag.slug}`} className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]">
+              <Link to={`/tags/${tag.slug}`} className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]">
                 {tag.name}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

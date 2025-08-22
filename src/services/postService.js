@@ -26,6 +26,19 @@ export const getPostsByCategory = async (slug) => {
   }
 };
 
+export const getPostsByTag = async (slug, params = {}) => {
+  try {
+    const baseUrl = API.POSTS.GET_BY_TAG(slug);
+    const queryString = new URLSearchParams(params).toString();
+    const url = `${baseUrl}?${queryString}`;
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching posts for tag ${slug}:`, error);
+    throw error;
+  }
+};
+
 export const getSinglePostBySlug = async (slug) => {
   try {
     const response = await axios.get(API.POSTS.GET_BY_SLUG(slug));

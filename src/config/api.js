@@ -12,6 +12,7 @@ const API = {
     GET_ALL_POST: () => `${BASE_URL}${BASE_API}/posts`,
     GET_BY_SLUG: (slug) => `${BASE_URL}${BASE_API}/posts/${slug}`,
     GET_BY_CATEGORY: (slug) => `${BASE_URL}${BASE_API}/posts/category/${slug}`,
+    GET_BY_TAG: (slug) => `${BASE_URL}${BASE_API}/posts/tag/${slug}`,
   },
   CATEGORIES: {
     GET_ALL: () => `${BASE_URL}${BASE_API}/categories`,

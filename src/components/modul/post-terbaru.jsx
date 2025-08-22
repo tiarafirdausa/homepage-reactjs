@@ -13,7 +13,7 @@ const stripHtmlTags = (html) => {
   return doc.body.textContent || "";
 };
 
-export default function PostTerbaru() {
+export default function PostTerbaru({ title }) {
   const [recentPosts, setRecentPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,11 +62,10 @@ export default function PostTerbaru() {
         <div className="flex flex-wrap mx-[-15px]">
           <div className="lg:w-9/12 xl:w-8/12 xxl:w-7/12 w-full flex-[0_0_auto] !px-[15px] max-w-full !mx-auto">
             <h2 className="!text-[.75rem] !leading-[1.35] uppercase !text-[#3f78e0] !text-center">
-              Our News
+              { title }
             </h2>
             <h3 className="!text-[calc(1.305rem_+_0.66vw)] font-bold xl:!text-[1.8rem] !leading-[1.3] !mb-6 !text-center">
-              Here are the latest company news from our blog that got the most
-              attention.
+              Berikut adalah daftar postingan terbaru yang telah kami publikasikan di blog kami.
             </h3>
           </div>
         </div>
@@ -99,7 +98,7 @@ export default function PostTerbaru() {
                     <article>
                       <div className="card">
                         <figure className="card-img-top overlay overlay-1 hover-scale group">
-                          <Link to={`/blog/${post.slug}`}>
+                          <Link to={`/post/${post.slug}`}>
                             <img
                               className="!transition-all !duration-[0.35s] !ease-in-out group-hover:scale-105"
                               alt={post.title}
@@ -119,7 +118,7 @@ export default function PostTerbaru() {
                             <h2 className="post-title h3 !mt-1 !mb-3">
                               <Link
                                 className="!text-[#343f52] hover:!text-[#747ed1]"
-                                to={`/blog/${post.slug}`}
+                                to={`/post/${post.slug}`}
                               >
                                 {post.title}
                               </Link>
@@ -139,7 +138,7 @@ export default function PostTerbaru() {
                               <li className="post-comments inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0] before:rounded-[100%] before:align-[.15rem] before:bg-[#aab0bc]">
                                 <a
                                   className="!text-[#aab0bc] hover:!text-[#747ed1] hover:!border-[#747ed1]"
-                                  href={`/blog/category/${post.category.slug}`}
+                                  href={`/kategori/${post.category.slug}`}
                                 >
                                   <i className="uil uil-file-alt !text-[.75rem] pr-[0.2rem] align-[-.05rem] before:content-['\eaec']" />
                                   {post.category.name}

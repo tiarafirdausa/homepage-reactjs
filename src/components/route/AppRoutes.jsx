@@ -68,7 +68,9 @@ const AppRoutes = ({ DemoPage15, SigninPage }) => {
             />
           ))}
 
-        <Route path="/kategori/:slug" element={<PostList type="category" />} />        <Route path="/post/:slug" element={<PostDetail />} />
+        <Route path="/kategori/:slug" element={<PostList type="category" />} />
+        <Route path="/tags/:slug" element={<PostList type="tag" />} />
+        <Route path="/post/:slug" element={<PostDetail />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
