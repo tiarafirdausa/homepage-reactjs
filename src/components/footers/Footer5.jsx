@@ -50,10 +50,10 @@ export default function Footer5({ hasMarginTop = false }) {
     );
   }
 
-  const siteTitle = settings?.short_title || "Sandbox";
-  const address = settings?.address || "Moonshine St. 14/05 Light City, London, United Kingdom";
-  const phone = settings?.phone || "00 (123) 456 78 90";
-  const email = settings?.email?.mail_from_address || "info@email.com";
+  const siteTitle = settings?.short_title ;
+  const address = settings?.address ;
+  const phone = settings?.phone ;
+  const email = settings?.email;
   const mapHtml = settings?.maps_url?.replace(/width="\d+"/, 'width="100%"').replace(/height="\d+"/, 'height="200"');
   
   return (

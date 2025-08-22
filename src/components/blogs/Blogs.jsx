@@ -133,7 +133,8 @@ export default function Blogs({
                         className="!text-[#aab0bc] hover:!text-[#3f78e0] hover:!border-[#3f78e0]"
                         href="#"
                       >
-                        <i className="uil uil-heart-alt pr-[0.2rem] align-[-.05rem] before:content-['\eb60']" />
+                        <i className="uil uil-eye pr-[0.2rem] align-[-.05rem] before:content-['\ec5c']" />
+                        <span>{post.hits || 0}</span>
                       </a>
                     </li>
                   </ul>

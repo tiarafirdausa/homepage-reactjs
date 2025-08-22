@@ -3,6 +3,7 @@ import { getRecentPosts } from "@/services/postService";
 import { getTags } from "@/services/tagService";
 import { getCategories } from "@/services/categoryService";
 import { getActiveSocials } from "@/services/socialService";
+import { getSettings } from "@/services/settingsService";
 import { BASE_URL } from "@/config/url";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMapping } from "@/utils/iconMapping";
@@ -11,6 +12,7 @@ import { Link } from "react-router-dom";
 export default function Sidebar() {
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [settings, setSettings] = useState({});
   const [socials, setSocials] = useState([]);
   const [recentPosts, setRecentPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,16 +20,18 @@ export default function Sidebar() {
    useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesData, tagsData, recentPostsData, socialsData] = await Promise.all([
+        const [categoriesData, tagsData, recentPostsData, socialsData, settingsData] = await Promise.all([
           getCategories(),
           getTags(),
           getRecentPosts({ pageSize: 3 }),
           getActiveSocials(),
+          getSettings(),
         ]);
         setCategories(categoriesData.categories || []);
         setTags(tagsData.tags || []);
         setRecentPosts(recentPostsData.data || []);
         setSocials(socialsData || []); 
+        setSettings(settingsData.general || {});
       } catch (error) {
         console.error("Failed to fetch sidebar data:", error);
       } finally {
@@ -71,11 +75,7 @@ export default function Sidebar() {
       {/* /.widget */}
       <div className="widget !mt-[40px]">
         <h4 className="widget-title !mb-3">About Us</h4>
-        <p>
-          Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum
-          nibh, ut fermentum. Nulla vitae elit libero, a pharetra augue. Donec
-          id elit non mi porta gravida at eget metus.
-        </p>
+        <p>{settings.site_description}</p>
         <nav className="nav social">
           {socials.map((item) => (
             <a key={item.id} className="text-[1rem] transition-all duration-[0.2s] ease-in-out translate-y-0 motion-reduce:transition-none hover:translate-y-[-0.15rem] m-[0_.7rem_0_0]" href={item.url}>

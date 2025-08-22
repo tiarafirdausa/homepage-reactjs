@@ -1,13 +1,14 @@
 // src/components/blogs/Comment.jsx
 
 import React from "react";
+import { FaUserCircle } from "react-icons/fa";
 
 const Comment = ({ comments }) => {
   const formatDate = (dateString) => {
     if (!dateString) return "Tanggal tidak tersedia";
     try {
-      const options = { year: 'numeric', month: 'short', day: 'numeric' };
-      return new Date(dateString).toLocaleDateString('en-US', options);
+      const options = { year: "numeric", month: "short", day: "numeric" };
+      return new Date(dateString).toLocaleDateString("en-US", options);
     } catch (e) {
       console.error("Gagal memformat tanggal:", e);
       return dateString;
@@ -32,13 +33,7 @@ const Comment = ({ comments }) => {
             <div className="comment-header xl:!flex lg:!flex md:!flex items-center !mb-[.5rem]">
               <div className="flex items-center">
                 <figure className="w-12 h-12 !relative !mr-4 rounded-[100%]">
-                  <img
-                    className="rounded-[50%]"
-                    alt="avatar"
-                    src="/assets/img/avatars/u1.jpg"
-                    width={120}
-                    height={120}
-                  />
+                  <FaUserCircle className="w-full h-full text-gray-400" />
                 </figure>
                 <div>
                   <h6 className="m-0 !mb-[0.2rem]">
@@ -53,15 +48,6 @@ const Comment = ({ comments }) => {
                     </li>
                   </ul>
                 </div>
-              </div>
-              <div className="!mt-3 xl:!mt-0 lg:!mt-0 md:!mt-0 !ml-auto">
-                <a
-                  href="#"
-                  className="btn btn-soft-ash btn-sm !rounded-[50rem] btn-icon btn-icon-start !mb-0 hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)]"
-                >
-                  <i className="uil uil-comments !mr-[0.3rem] before:content-['\ea56'] text-[.8rem]" />
-                  Reply
-                </a>
               </div>
             </div>
             <p>{comment.content}</p>
