@@ -10,7 +10,8 @@ import { iconMapping } from "@/utils/iconMapping";
 import { BASE_URL } from "@/config/url";
 
 export default function Header32({
-  parentClass = "relative wrapper",
+  // parentClass = "relative wrapper",
+  parentClass = "fixed top-0 w-full z-50", // Modified classes
   navClass = "navbar navbar-expand-lg center-nav transparent navbar-light",
   colorClass = "!bg-[#ffffff]" 
 }) {

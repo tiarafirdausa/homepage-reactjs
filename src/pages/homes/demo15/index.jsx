@@ -12,6 +12,7 @@ import Profile from "@/components/modul/profil"; // Keep the import
 import PostTerbaru from "@/components/modul/post-terbaru";
 
 import { getHomeModules } from "@/services/modulService";
+import Header32 from "@/components/headers/Header32";
 
 const componentMap = {
   "popular-post": PostTerpopuler,
@@ -65,12 +66,14 @@ export default function DemoPage15() {
       <MetaComponent />
       <div className="page-frame !bg-[#e0e9fa]">
         <div className="grow shrink-0">
-          <Header33 />
-          <section className="wrapper bg-[#21262c] opacity-100">
-            <Hero />
-          </section>
+          <Header32 colorClass="!bg-[#e0e9fa]" />
+          <div className="pt-[2rem]"> 
+              <Hero />
+            <section className="wrapper bg-[#21262c] opacity-100">
+            </section>
             {renderModules()}
-          <Footer5 />
+            <Footer5 />
+          </div>
         </div>
       </div>
     </>

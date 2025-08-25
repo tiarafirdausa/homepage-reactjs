@@ -10,6 +10,8 @@ import {
   faWhatsapp,
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
+import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+
 
 export const iconMapping = {
   "fab fa-discord": faDiscord,
@@ -21,4 +23,5 @@ export const iconMapping = {
   "fab fa-twitter": faTwitter,
   "fab fa-whatsapp": faWhatsapp,
   "fab fa-youtube": faYoutube,
+  "fas fa-globe": faGlobe,
 };

@@ -12,12 +12,37 @@ import AppRoutes from "./components/route/AppRoutes.jsx";
 import initPlayer from "@/utils/initPlayer.js";
 import scrollQue from "@/utils/scrollCue.min.js";
 
-// Lazy-loaded pages
+import { getSettings } from "./services/settingsService.js";
+import { BASE_URL } from "@/config/url";
+
 const DemoPage15 = lazy(() => import("./pages/homes/demo15/index.jsx"));
 const SigninPage = lazy(() => import("./pages/utility/signin/index.jsx"));
 
 function App() {
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    const updateFavicon = async () => {
+      try {
+        const settings = await getSettings();
+        const logoPath = settings.appearance.logo;
+        const logoUrl = `${BASE_URL}${logoPath}`;
+
+        const existingLink = document.querySelector('link[rel="icon"]');
+        if (existingLink) {
+          existingLink.href = logoUrl;
+        } else {
+          const newLink = document.createElement("link");
+          newLink.rel = "icon";
+          newLink.href = logoUrl;
+          document.head.appendChild(newLink);
+        }
+      } catch (error) {
+        console.error("Failed to load settings:", error);
+      }
+    };
+    updateFavicon();
+  }, []);
 
   useEffect(() => {
     scrollQue().init();
