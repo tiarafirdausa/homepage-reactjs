@@ -1,15 +1,15 @@
-// src/components/blogs/Sidebar.jsx
-
 import React, { useState, useEffect } from "react";
-import { getRecentPosts } from "@/services/postService";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { getRecentPosts, getPopularPosts } from "@/services/postService"; // Tambahkan getPopularPosts
 import { getTags } from "@/services/tagService";
 import { getCategories } from "@/services/categoryService";
 import { getActiveSocials } from "@/services/socialService";
 import { getSettings } from "@/services/settingsService";
+import { getWidgetModules } from "@/services/modulService";
 import { BASE_URL } from "@/config/url";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMapping } from "@/utils/iconMapping";
-import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   const [categories, setCategories] = useState([]);
@@ -17,23 +17,37 @@ export default function Sidebar() {
   const [settings, setSettings] = useState({});
   const [socials, setSocials] = useState([]);
   const [recentPosts, setRecentPosts] = useState([]);
+  const [popularPosts, setPopularPosts] = useState([]); // State baru untuk popular posts
+  const [widgetModules, setWidgetModules] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesData, tagsData, recentPostsData, socialsData, settingsData] = await Promise.all([
+        const [
+          categoriesData,
+          tagsData,
+          recentPostsData,
+          socialsData,
+          settingsData,
+          widgetModulesData,
+          popularPostsData, // Panggil fungsi popular posts
+        ] = await Promise.all([
           getCategories(),
           getTags(),
           getRecentPosts({ pageSize: 3 }),
           getActiveSocials(),
           getSettings(),
+          getWidgetModules(),
+          getPopularPosts({ pageSize: 3 }), // Panggil dengan batas 3 post
         ]);
         setCategories(categoriesData.categories || []);
         setTags(tagsData.tags || []);
         setRecentPosts(recentPostsData.data || []);
+        setPopularPosts(popularPostsData.data || []); // Simpan data popular posts
         setSocials(socialsData || []);
         setSettings(settingsData.general || {});
+        setWidgetModules(widgetModulesData || []);
       } catch (error) {
         console.error("Failed to fetch sidebar data:", error);
       } finally {
@@ -42,6 +56,98 @@ export default function Sidebar() {
     };
     fetchData();
   }, []);
+
+  const renderPostList = (posts) => (
+    <ul className="m-0 p-0 after:content-[''] after:block after:h-0 after:clear-both after:invisible">
+      {posts.map((post, i) => (
+        <li
+          key={post.id}
+          className={`clear-both block overflow-hidden ${
+            i !== 0 ? "!mt-4" : ""
+          }`}
+        >
+          <figure className="!rounded-[.4rem] float-left w-14 !h-[4.5rem]">
+            <Link to={`/post/${post.slug}`}>
+              <img
+                className="!rounded-[.4rem]"
+                alt={post.title}
+                src={`${BASE_URL}${post.featured_image}`}
+                width={100}
+                height={100}
+              />
+            </Link>
+          </figure>
+          <div className="!relative !ml-[4.25rem] !mb-0">
+            <h6 className="!mb-2">
+              <Link
+                className="!text-[#343f52] hover:!text-[#3f78e0]"
+                to={`/post/${post.slug}`}
+              >
+                {post.title}
+              </Link>
+            </h6>
+            <ul className="!text-[0.7rem] !text-[#aab0bc] m-0 p-0 list-none">
+              <li className="post-date inline-block">
+                <i className="uil uil-calendar-alt pr-[0.2rem] align-[-.05rem] before:content-['\e9ba']" />
+                <span>{new Date(post.published_at).toLocaleDateString()}</span>
+              </li>
+              <li className="post-comments inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0] before:rounded-[100%] before:align-[.15rem] before:bg-[#aab0bc]">
+                <a
+                  className="!text-[#aab0bc] hover:!text-[#3f78e0] hover:!border-[#3f78e0]"
+                  href="#"
+                >
+                  <i className="uil uil-comment pr-[0.2rem] align-[-.05rem] before:content-['\ea54']" />
+                  0
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+
+  const renderWidgetModules = () => {
+    return widgetModules.map((modul) => {
+      const widgetContent = () => {
+        if (modul.folder === "recent-post") {
+          return renderPostList(recentPosts);
+        } else if (modul.folder === "popular-post") {
+          return renderPostList(popularPosts);
+        } else if (modul.folder === "profile") {
+          return (
+            <>
+              <p>{settings.site_description}</p>
+              <nav className="nav social">
+                {socials.map((item) => (
+                  <a
+                    key={item.id}
+                    className="text-[1rem] transition-all duration-[0.2s] ease-in-out translate-y-0 motion-reduce:transition-none hover:translate-y-[-0.15rem] m-[0_.7rem_0_0]"
+                    href={item.url}
+                  >
+                    <FontAwesomeIcon icon={iconMapping[item.icon_class]} />
+                  </a>
+                ))}
+              </nav>
+            </>
+          );
+        } else if (modul.folder === "media") {
+          return null;
+        }
+        return null;
+      };
+
+      if (widgetContent()) {
+        return (
+          <div key={modul.id_modul} className="widget !mt-[40px]">
+            <h4 className="widget-title !mb-3">{modul.judul}</h4>
+            {widgetContent()}
+          </div>
+        );
+      }
+      return null;
+    });
+  };
 
   if (loading) {
     return (
@@ -74,72 +180,9 @@ export default function Sidebar() {
           </div>
         </form>
       </div>
-      {/* /.widget */}
-      <div className="widget !mt-[40px]">
-        <h4 className="widget-title !mb-3">About Us</h4>
-        <p>{settings.site_description}</p>
-        <nav className="nav social">
-          {socials.map((item) => (
-            <a key={item.id} className="text-[1rem] transition-all duration-[0.2s] ease-in-out translate-y-0 motion-reduce:transition-none hover:translate-y-[-0.15rem] m-[0_.7rem_0_0]" href={item.url}>
-              <FontAwesomeIcon icon={iconMapping[item.icon_class]} />
-            </a>
-          ))}
-        </nav>
-        {/* /.social */}
-      </div>
-      {/* /.widget */}
-      <div className="widget !mt-[40px]">
-        <h4 className="widget-title !mb-3">Recent Posts</h4>
-        <ul className="m-0 p-0 after:content-[''] after:block after:h-0 after:clear-both after:invisible">
-          {recentPosts.map((post, i) => (
-            <li
-              key={post.id}
-              className={`clear-both block overflow-hidden ${
-                i !== 0 ? "!mt-4" : ""
-              }`}
-            >
-              <figure className="!rounded-[.4rem] float-left w-14 !h-[4.5rem]">
-                <Link to={`/post/${post.slug}`}>
-                  <img
-                    className="!rounded-[.4rem]"
-                    alt={post.title}
-                    src={`${BASE_URL}${post.featured_image}`}
-                    width={100}
-                    height={100}
-                  />
-                </Link>
-              </figure>
-              <div className="!relative !ml-[4.25rem] !mb-0">
-                <h6 className="!mb-2">
-                  <Link
-                    className="!text-[#343f52] hover:!text-[#3f78e0]"
-                    to={`/post/${post.slug}`}
-                  >
-                    {post.title}
-                  </Link>
-                </h6>
-                <ul className="!text-[0.7rem] !text-[#aab0bc] m-0 p-0 list-none">
-                  <li className="post-date inline-block">
-                    <i className="uil uil-calendar-alt pr-[0.2rem] align-[-.05rem] before:content-['\e9ba']" />
-                    <span>{new Date(post.published_at).toLocaleDateString()}</span>
-                  </li>
-                  <li className="post-comments inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0] before:rounded-[100%] before:align-[.15rem] before:bg-[#aab0bc]">
-                    <a
-                      className="!text-[#aab0bc] hover:!text-[#3f78e0] hover:!border-[#3f78e0]"
-                      href="#"
-                    >
-                      <i className="uil uil-comment pr-[0.2rem] align-[-.05rem] before:content-['\ea54']" />
-                      0
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-          ))}
-        </ul>
-        {/* /.image-list */}
-      </div>
-      {/* /.widget */}
+
+      {renderWidgetModules()}
+
       <div className="widget !mt-[40px]">
         <h4 className="widget-title !mb-3">Categories</h4>
         <ul className="pl-0 list-none bullet-primary !text-inherit">
@@ -152,7 +195,7 @@ export default function Sidebar() {
           ))}
         </ul>
       </div>
-      {/* /.widget */}
+
       <div className="widget !mt-[40px]">
         <h4 className="widget-title !mb-3">Tags</h4>
         <ul className="pl-0 list-none tag-list">

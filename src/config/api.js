@@ -36,6 +36,7 @@ const API = {
     GET_ALL: () => `${BASE_URL}${BASE_API}/moduls`,
     GET_BY_ID: (id) => `${BASE_URL}${BASE_API}/moduls/${id}`,
     GET_HOME_MODULS: () => `${BASE_URL}${BASE_API}/moduls/home`,
+    GET_WIDGET_MODULS: () => `${BASE_URL}${BASE_API}/moduls/widget`,
   },
   BANNERS: {
     GET_ALL_BANNERS: () => `${BASE_URL}${BASE_API}/banners`,

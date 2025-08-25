@@ -35,3 +35,13 @@ export const getHomeModules = async () => {
     throw error;
   }
 };
+
+export const getWidgetModules = async () => {
+  try {
+    const response = await axios.get(API.MODULS.GET_WIDGET_MODULS());
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching widget modules:", error);
+    throw error;
+  }
+}

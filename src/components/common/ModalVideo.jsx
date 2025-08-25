@@ -1,38 +1,49 @@
 const ModalVideo = ({ videoId, isOpen, setIsOpen, src }) => {
   const closeModal = () => setIsOpen(false);
 
+  // cek ekstensi file
+  const isSelfHosted = src && src.match(/\.(mp4|webm|ogg)$/i);
+
   return (
-    <>
-      <div
-        style={{
-          ...overlayStyle,
-          visibility: isOpen ? "visible" : "hidden",
-          opacity: isOpen ? 1 : 0,
-        }}
-        onClick={closeModal}
-      >
-        <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-          <button onClick={closeModal} style={closeButtonStyle}>
-            ×
-          </button>
-          <div style={responsiveIframeContainerStyle}>
+    <div
+      style={{
+        ...overlayStyle,
+        visibility: isOpen ? "visible" : "hidden",
+        opacity: isOpen ? 1 : 0,
+      }}
+      onClick={closeModal}
+    >
+      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+        <button onClick={closeModal} style={closeButtonStyle}>
+          ×
+        </button>
+        <div style={responsiveIframeContainerStyle}>
+          {isSelfHosted ? (
+            <video
+              src={src}
+              controls
+              autoPlay
+              style={iframeStyle}
+            />
+          ) : (
             <iframe
               src={
                 src
                   ? src
                   : `https://www.youtube.com/embed/${videoId}?autoplay=1`
               }
-              title="YouTube video player"
+              title="Video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               style={iframeStyle}
             ></iframe>
-          </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
+
 
 // Styles
 

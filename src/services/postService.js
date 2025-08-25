@@ -2,10 +2,16 @@
 import axios from "axios";
 import API from "@/config/api";
 
+// Helper function to add the published status parameter
+const addPublishedStatus = (params = {}) => {
+  return { ...params, status: "published" };
+};
+
 export const getPosts = async (params = {}) => {
   try {
     const baseUrl = API.POSTS.GET_ALL_POST();
-    const queryString = new URLSearchParams(params).toString();
+    const publishedParams = addPublishedStatus(params);
+    const queryString = new URLSearchParams(publishedParams).toString();
     const url = `${baseUrl}?${queryString}`;
 
     const response = await axios.get(url);
@@ -16,9 +22,13 @@ export const getPosts = async (params = {}) => {
   }
 };
 
-export const getPostsByCategory = async (slug) => {
+export const getPostsByCategory = async (slug, params = {}) => {
   try {
-    const response = await axios.get(API.POSTS.GET_BY_CATEGORY(slug));
+    const baseUrl = API.POSTS.GET_BY_CATEGORY(slug);
+    const publishedParams = addPublishedStatus(params);
+    const queryString = new URLSearchParams(publishedParams).toString();
+    const url = `${baseUrl}?${queryString}`;
+    const response = await axios.get(url);
     return response.data;
   } catch (error) {
     console.error(`Error fetching posts for category ${slug}:`, error);
@@ -29,7 +39,8 @@ export const getPostsByCategory = async (slug) => {
 export const getPostsByTag = async (slug, params = {}) => {
   try {
     const baseUrl = API.POSTS.GET_BY_TAG(slug);
-    const queryString = new URLSearchParams(params).toString();
+    const publishedParams = addPublishedStatus(params);
+    const queryString = new URLSearchParams(publishedParams).toString();
     const url = `${baseUrl}?${queryString}`;
     const response = await axios.get(url);
     return response.data;
@@ -39,9 +50,13 @@ export const getPostsByTag = async (slug, params = {}) => {
   }
 };
 
-export const getSinglePostBySlug = async (slug) => {
+export const getSinglePostBySlug = async (slug, params = {}) => {
   try {
-    const response = await axios.get(API.POSTS.GET_BY_SLUG(slug));
+    const baseUrl = API.POSTS.GET_BY_SLUG(slug);
+    const publishedParams = addPublishedStatus(params);
+    const queryString = new URLSearchParams(publishedParams).toString();
+    const url = `${baseUrl}?${queryString}`;
+    const response = await axios.get(url);
     return response.data;
   } catch (error) {
     console.error(`Error fetching single post with slug ${slug}:`, error);
@@ -71,7 +86,8 @@ export const getPopularPosts = async (params = {}) => {
       ...params,
     };
     const baseUrl = API.POSTS.GET_ALL_POST();
-    const queryString = new URLSearchParams(defaultParams).toString();
+    const publishedParams = addPublishedStatus(defaultParams);
+    const queryString = new URLSearchParams(publishedParams).toString();
     const url = `${baseUrl}?${queryString}`;
 
     const response = await axios.get(url);
