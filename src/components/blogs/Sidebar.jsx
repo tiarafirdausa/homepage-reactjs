@@ -1,8 +1,10 @@
+// src/components/blogs/Sidebar.jsx
+
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { getRecentPosts, getPopularPosts } from "@/services/postService"; // Tambahkan getPopularPosts
+import { getRecentPosts, getPopularPosts } from "@/services/postService";
 import { getTags } from "@/services/tagService";
 import { getCategories } from "@/services/categoryService";
 import { getActiveSocials } from "@/services/socialService";
@@ -17,9 +19,11 @@ export default function Sidebar() {
   const [settings, setSettings] = useState({});
   const [socials, setSocials] = useState([]);
   const [recentPosts, setRecentPosts] = useState([]);
-  const [popularPosts, setPopularPosts] = useState([]); // State baru untuk popular posts
+  const [popularPosts, setPopularPosts] = useState([]);
   const [widgetModules, setWidgetModules] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +35,7 @@ export default function Sidebar() {
           socialsData,
           settingsData,
           widgetModulesData,
-          popularPostsData, // Panggil fungsi popular posts
+          popularPostsData,
         ] = await Promise.all([
           getCategories(),
           getTags(),
@@ -39,12 +43,12 @@ export default function Sidebar() {
           getActiveSocials(),
           getSettings(),
           getWidgetModules(),
-          getPopularPosts({ pageSize: 3 }), // Panggil dengan batas 3 post
+          getPopularPosts({ pageSize: 3 }),
         ]);
         setCategories(categoriesData.categories || []);
         setTags(tagsData.tags || []);
         setRecentPosts(recentPostsData.data || []);
-        setPopularPosts(popularPostsData.data || []); // Simpan data popular posts
+        setPopularPosts(popularPostsData.data || []);
         setSocials(socialsData || []);
         setSettings(settingsData.general || {});
         setWidgetModules(widgetModulesData || []);
@@ -56,6 +60,17 @@ export default function Sidebar() {
     };
     fetchData();
   }, []);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/post?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   const renderPostList = (posts) => (
     <ul className="m-0 p-0 after:content-[''] after:block after:h-0 after:clear-both after:invisible">
@@ -161,13 +176,15 @@ export default function Sidebar() {
     <aside className="xl:w-4/12 lg:w-4/12 w-full flex-[0_0_auto] xl:!px-[35px] lg:!px-[20px] !px-[15px] max-w-full sidebar !mt-8 xl:!mt-6 lg:!mt-6">
       <div className="widget">
         <form
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleSearchSubmit}
           className="search-form relative before:content-['\eca5'] before:block before:absolute before:-translate-y-2/4 before:text-[0.9rem] before:!text-[#959ca9] before:z-[9] before:right-3 before:top-2/4 font-Unicons"
         >
           <div className="form-floating relative !mb-0">
             <input
               id="search-form"
               type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
               className="form-control relative block w-full text-[.75rem] font-medium !text-[#60697b] bg-[#fefefe] bg-clip-padding border shadow-[0_0_1.25rem_rgba(30,34,40,0.04)] rounded-[0.4rem] border-solid border-[rgba(8,60,130,0.07)] transition-[border-color] duration-[0.15s] ease-in-out focus:shadow-[0_0_1.25rem_rgba(30,34,40,0.04),unset] focus-visible:!border-[rgba(63,120,224,0.5)] placeholder:!text-[#959ca9] placeholder:opacity-100 m-0 !pr-9 p-[.6rem_1rem] h-[calc(2.5rem_+_2px)] min-h-[calc(2.5rem_+_2px)] !leading-[1.25]"
               placeholder=""
             />

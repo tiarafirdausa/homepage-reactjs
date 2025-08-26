@@ -2,7 +2,6 @@
 import axios from "axios";
 import API from "@/config/api";
 
-// Helper function to add the published status parameter
 const addPublishedStatus = (params = {}) => {
   return { ...params, status: "published" };
 };

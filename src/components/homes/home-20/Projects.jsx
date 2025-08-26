@@ -6,6 +6,11 @@ import { BASE_URL } from "@/config/url";
 import Isotope from "isotope-layout";
 import imagesloaded from "imagesloaded";
 
+const stripHtmlTags = (html) => {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || "";
+};
+
 export default function Projects() {
   const [projectCollections, setProjectCollections] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -241,9 +246,9 @@ export default function Projects() {
                         {projectCollection.title}
                       </Link>
                     </h2>
-                    <div className="uppercase !tracking-[0.02rem] text-[0.7rem] font-bold !mb-[0.4rem] !text-[#9499a3]">
-                      {projectCollection.category_name}
-                    </div>
+                    <div className="!tracking-[0.02rem] text-[0.7rem] font-bold !mb-[0.4rem] !text-[#9499a3]">
+                        {stripHtmlTags(projectCollection.caption)}
+                      </div>
                   </div>
                 </div>
               </div>
