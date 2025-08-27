@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Gallery, Item } from "react-photoswipe-gallery";
 
 import { getRecentPosts, getPopularPosts } from "@/services/postService";
 import { getTags } from "@/services/tagService";
@@ -10,6 +11,7 @@ import { getCategories } from "@/services/categoryService";
 import { getActiveSocials } from "@/services/socialService";
 import { getSettings } from "@/services/settingsService";
 import { getWidgetModules } from "@/services/modulService";
+import { getMedia } from "@/services/mediaService";
 import { BASE_URL } from "@/config/url";
 import { iconMapping } from "@/utils/iconMapping";
 
@@ -21,6 +23,7 @@ export default function Sidebar() {
   const [recentPosts, setRecentPosts] = useState([]);
   const [popularPosts, setPopularPosts] = useState([]);
   const [widgetModules, setWidgetModules] = useState([]);
+  const [mediaItems, setMediaItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -36,6 +39,7 @@ export default function Sidebar() {
           settingsData,
           widgetModulesData,
           popularPostsData,
+          mediaData,
         ] = await Promise.all([
           getCategories(),
           getTags(),
@@ -44,7 +48,9 @@ export default function Sidebar() {
           getSettings(),
           getWidgetModules(),
           getPopularPosts({ pageSize: 3 }),
+          getMedia(),
         ]);
+
         setCategories(categoriesData.categories || []);
         setTags(tagsData.tags || []);
         setRecentPosts(recentPostsData.data || []);
@@ -52,6 +58,8 @@ export default function Sidebar() {
         setSocials(socialsData || []);
         setSettings(settingsData.general || {});
         setWidgetModules(widgetModulesData || []);
+
+        setMediaItems(mediaData.data || []);
       } catch (error) {
         console.error("Failed to fetch sidebar data:", error);
       } finally {
@@ -147,8 +155,110 @@ export default function Sidebar() {
             </>
           );
         } else if (modul.folder === "media") {
-          return null;
+          return (
+            <div className="flex flex-wrap gallery-side">
+              {mediaItems.slice(0, 6).map((collection) => {
+                if (!collection.media || collection.media.length === 0)
+                  return null;
+
+                const firstItem = collection.media[0];
+                const thumbnailUrl = firstItem.cropped_url
+                  ? `${BASE_URL}${firstItem.cropped_url}`
+                  : `${BASE_URL}${firstItem.url}`;
+
+                return (
+                  <div
+                    key={collection.id}
+                    className="media-collection-thumbnail w-1/3 p-[2px] cursor-pointer"
+                  >
+                    <Gallery>
+                      {collection.media.map((media, idx) => {
+                        const isVideo = media.url
+                          .toLowerCase()
+                          .match(/\.(mp4|webm|ogg)$/);
+                        const isImage = media.url
+                          .toLowerCase()
+                          .match(/\.(jpeg|jpg|png|gif)$/);
+                        const mediaUrl = `${BASE_URL}${media.url}`;
+                        const thumb = media.cropped_url
+                          ? `${BASE_URL}${media.cropped_url}`
+                          : mediaUrl;
+
+                        if (isImage) {
+                          return (
+                            <Item
+                              key={media.id}
+                              original={mediaUrl}
+                              thumbnail={thumb}
+                            >
+                              {({ ref, open }) =>
+                                idx === 0 ? (
+                                  <img
+                                    ref={ref}
+                                    onClick={open}
+                                    src={thumbnailUrl}
+                                    alt={collection.title || "Media thumbnail"}
+                                    className="w-full h-full object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer"
+                                  />
+                                ) : (
+                                  <span ref={ref} /> // hanya ikut group, tidak ditampilkan
+                                )
+                              }
+                            </Item>
+                          );
+                        }
+
+                        if (isVideo) {
+                          return (
+                            <Item
+                              key={media.id}
+                              original={mediaUrl}
+                              thumbnail={thumb}
+                              content={
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <video
+                                    controls
+                                    autoPlay
+                                    className="max-h-[80vh] max-w-[90vw] rounded-md"
+                                  >
+                                    <source
+                                      src={mediaUrl}
+                                      type={`video/${media.url
+                                        .split(".")
+                                        .pop()}`}
+                                    />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                </div>
+                              }
+                            >
+                              {({ ref, open }) =>
+                                idx === 0 ? (
+                                  <img
+                                    ref={ref}
+                                    onClick={open}
+                                    src={thumbnailUrl}
+                                    alt={collection.title || "Video thumbnail"}
+                                    className="w-full h-full object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer"
+                                  />
+                                ) : (
+                                  <span ref={ref} /> 
+                                )
+                              }
+                            </Item>
+                          );
+                        }
+
+                        return null;
+                      })}
+                    </Gallery>
+                  </div>
+                );
+              })}
+            </div>
+          );
         }
+
         return null;
       };
 
@@ -204,8 +314,14 @@ export default function Sidebar() {
         <h4 className="widget-title !mb-3">Categories</h4>
         <ul className="pl-0 list-none bullet-primary !text-inherit">
           {categories.map((category) => (
-            <li key={category.id} className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]">
-              <Link className="!text-[#60697b] hover:!text-[#3f78e0]" to={`/kategori/${category.slug}`}>
+            <li
+              key={category.id}
+              className="relative !pl-[1rem] before:absolute before:top-[-0.15rem] before:text-[1rem] before:content-['\2022'] before:left-0 before:font-SansSerif !mt-[.35rem]"
+            >
+              <Link
+                className="!text-[#60697b] hover:!text-[#3f78e0]"
+                to={`/kategori/${category.slug}`}
+              >
                 {category.name}
               </Link>
             </li>
@@ -217,8 +333,14 @@ export default function Sidebar() {
         <h4 className="widget-title !mb-3">Tags</h4>
         <ul className="pl-0 list-none tag-list">
           {tags.map((tag) => (
-            <li key={tag.id} className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block">
-              <Link to={`/tags/${tag.slug}`} className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]">
+            <li
+              key={tag.id}
+              className="!mt-0 !mb-[0.45rem] !mr-[0.2rem] inline-block"
+            >
+              <Link
+                to={`/tags/${tag.slug}`}
+                className="btn btn-soft-ash btn-sm !rounded-[50rem] flex items-center hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,.05)] before:not-italic before:content-['#'] before:font-normal before:!pr-[0.2rem]"
+              >
                 {tag.name}
               </Link>
             </li>

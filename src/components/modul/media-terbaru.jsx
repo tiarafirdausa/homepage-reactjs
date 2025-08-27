@@ -129,10 +129,12 @@ export default function Media({ title }) {
                             <Item
                               original={originalUrl}
                               content={
+                              <div className="w-full h-full flex items-center justify-center">
                                 <video controls style={{ maxWidth: "100%" }}>
                                   <source src={originalUrl} type="video/mp4" />
                                   Your browser does not support the video tag.
                                 </video>
+                              </div>
                               }
                               thumbnail={thumbnailUrl}
                             >

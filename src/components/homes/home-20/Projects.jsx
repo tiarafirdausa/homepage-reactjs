@@ -96,7 +96,7 @@ export default function Projects() {
     <section className="wrapper !bg-[#ffffff]">
       <div className="container pt-[2rem] pb-[5rem] xl:!py-24 lg:!py-24 md:!py-24">
         {/* Header */}
-        <div className="flex flex-wrap mx-[-15px] max-w-[1240px] md:w-8/12 lg:w-7/12 xl:w-6/12 xxl:w-5/12 w-full flex-[0_0_auto] !px-[15px] max-w-full">
+        <div className="flex flex-wrap mx-[-15px] md:w-8/12 lg:w-7/12 xl:w-6/12 xxl:w-5/12 w-full flex-[0_0_auto] !px-[15px] max-w-full">
           <h1 className="!text-[calc(1.365rem_+_1.38vw)] font-bold !leading-[1.2] xl:!text-[2.4rem] !mb-3">
             Projects
           </h1>
@@ -201,10 +201,12 @@ export default function Projects() {
                           <Item
                             original={videoUrl}
                             content={
+                              <div className="w-full h-full flex items-center justify-center">
                               <video controls style={{ maxWidth: "100%" }}>
                                 <source src={videoUrl} type="video/mp4" />
                                 Your browser does not support the video tag.
                               </video>
+                              </div>
                             }
                             thumbnail={thumbnailUrl}
                           >
