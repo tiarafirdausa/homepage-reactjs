@@ -1,24 +1,23 @@
-// src/pages/homes/demo15/index.jsx
-
 import Hero from "@/components/homes/home-15/Hero";
 import React, { useState, useEffect } from "react";
 import MetaComponent from "@/components/common/MetaComponent";
-import Header33 from "@/components/headers/Header33";
+import Header32 from "@/components/headers/Header32";
 import Footer5 from "@/components/footers/Footer5";
 
 import MediaTerbaru from "@/components/modul/media-terbaru";
 import PostTerpopuler from "@/components/modul/post-terpopuler";
-import Profile from "@/components/modul/profil"; // Keep the import
+import Profile from "@/components/modul/profil";
 import PostTerbaru from "@/components/modul/post-terbaru";
+import Link from "@/components/modul/links";
 
 import { getHomeModules } from "@/services/modulService";
-import Header32 from "@/components/headers/Header32";
 
 const componentMap = {
   "popular-post": PostTerpopuler,
   "recent-post": PostTerbaru,
   "media": MediaTerbaru,
   "profile": Profile,
+  "link": Link,
 };
 
 export default function DemoPage15() {
@@ -36,7 +35,6 @@ export default function DemoPage15() {
         setPageLoading(false);
       }
     };
-
     fetchAllModules();
   }, []);
 
@@ -52,7 +50,8 @@ export default function DemoPage15() {
           modul.folder === "popular-post" ||
           modul.folder === "recent-post" ||
           modul.folder === "media" ||
-          modul.folder === "profile"
+          modul.folder === "profile" ||
+          modul.folder === "link" 
         ) {
           return <Component key={modul.id_modul} className="!mt-16" title={modul.judul} />;
         }

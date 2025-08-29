@@ -1,5 +1,3 @@
-// src/components/blogs/Sidebar.jsx
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,6 +10,7 @@ import { getActiveSocials } from "@/services/socialService";
 import { getSettings } from "@/services/settingsService";
 import { getWidgetModules } from "@/services/modulService";
 import { getMedia } from "@/services/mediaService";
+import { getLinks } from "@/services/linkService"; // Import getLinks
 import { BASE_URL } from "@/config/url";
 import { iconMapping } from "@/utils/iconMapping";
 
@@ -24,6 +23,7 @@ export default function Sidebar() {
   const [popularPosts, setPopularPosts] = useState([]);
   const [widgetModules, setWidgetModules] = useState([]);
   const [mediaItems, setMediaItems] = useState([]);
+  const [links, setLinks] = useState([]); // New state for links
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -40,6 +40,7 @@ export default function Sidebar() {
           widgetModulesData,
           popularPostsData,
           mediaData,
+          linksData, // Fetch links data
         ] = await Promise.all([
           getCategories(),
           getTags(),
@@ -49,6 +50,7 @@ export default function Sidebar() {
           getWidgetModules(),
           getPopularPosts({ pageSize: 3 }),
           getMedia(),
+          getLinks(), // Call getLinks()
         ]);
 
         setCategories(categoriesData.categories || []);
@@ -58,8 +60,8 @@ export default function Sidebar() {
         setSocials(socialsData || []);
         setSettings(settingsData.general || {});
         setWidgetModules(widgetModulesData || []);
-
         setMediaItems(mediaData.data || []);
+        setLinks(linksData.data || []); // Set links state
       } catch (error) {
         console.error("Failed to fetch sidebar data:", error);
       } finally {
@@ -128,6 +130,40 @@ export default function Sidebar() {
         </li>
       ))}
     </ul>
+  );
+
+const renderLinkList = (links) => (
+    // Menggunakan Grid untuk memastikan 5 item per baris
+    <div className="grid grid-cols-5 gap-2 justify-items-center">
+      {links.map((link) => (
+        <div key={link.id} className="flex flex-col items-center text-center">
+          <a href={link.link} target="_blank" rel="noopener noreferrer">
+            <figure className="rounded-full w-12 h-12 mb-1 overflow-hidden">
+              <img
+                className="w-full h-full object-cover"
+                alt={link.judul}
+                src={link.gambar ? `${BASE_URL}${link.gambar}` : 'placeholder.jpg'}
+                width={48}
+                height={48}
+              />
+            </figure>
+          </a>
+          <h6 className="text-xs font-semibold !mb-0.5">
+            <a
+              className="text-[#343f52] hover:text-[#3f78e0]"
+              href={link.link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {link.judul}
+            </a>
+          </h6>
+          <div className="text-[0.6rem] text-[#aab0bc] uppercase tracking-[0.02rem] font-bold">
+            {link.kategori}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 
   const renderWidgetModules = () => {
@@ -242,7 +278,7 @@ export default function Sidebar() {
                                     className="w-full h-full object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer"
                                   />
                                 ) : (
-                                  <span ref={ref} /> 
+                                  <span ref={ref} />
                                 )
                               }
                             </Item>
@@ -257,6 +293,8 @@ export default function Sidebar() {
               })}
             </div>
           );
+        } else if (modul.folder === "link") {
+          return renderLinkList(links);
         }
 
         return null;

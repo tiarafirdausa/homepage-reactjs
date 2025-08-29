@@ -73,17 +73,27 @@ function App() {
   }, [pathname]);
 
   useEffect(() => {
-    import("bootstrap").then(({ Modal, Offcanvas }) => {
-      const modals = document.querySelectorAll(".modal.show");
-      modals.forEach((modal) => Modal.getInstance(modal)?.hide());
-      const offcanvas = document.querySelectorAll(".offcanvas.show");
-      offcanvas.forEach((item) => Offcanvas.getInstance(item)?.hide());
-      const searchCanvas = document.getElementById("offcanvas-search");
-      searchCanvas?.addEventListener("shown.bs.offcanvas", () => {
-        document.getElementById("search-form")?.focus();
-      });
+  import("bootstrap").then(({ Modal, Offcanvas }) => {
+    // Tutup modal & offcanvas yang terbuka
+    document.querySelectorAll(".modal.show")
+      .forEach((modal) => Modal.getInstance(modal)?.hide());
+    document.querySelectorAll(".offcanvas.show")
+      .forEach((item) => Offcanvas.getInstance(item)?.hide());
+
+    // ✅ Tambahin inisialisasi offcanvas dengan scroll: true
+    const navOffCanvas = document.querySelector(".offcanvas");
+    if (navOffCanvas) {
+      new Offcanvas(navOffCanvas, { scroll: true });
+    }
+
+    // Fokus otomatis ke form search
+    const searchCanvas = document.getElementById("offcanvas-search");
+    searchCanvas?.addEventListener("shown.bs.offcanvas", () => {
+      document.getElementById("search-form")?.focus();
     });
-  }, [pathname]);
+  });
+}, [pathname]);
+
 
   return (
     <Context>

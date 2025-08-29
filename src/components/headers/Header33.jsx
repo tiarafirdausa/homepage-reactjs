@@ -47,7 +47,9 @@ export default function Header33() {
               <div className="flex items-center">
                 <img src={logo} alt="site logo" width={60} height={60} />
                 <span
-                  className={`ml-2 font-bold ${isSticky ? "text-black" : "text-white"}`}
+                  className={`ml-2 font-bold ${
+                    isSticky ? "text-black" : "text-white"
+                  }`}
                 >
                   {shortTitle}
                 </span>
@@ -58,6 +60,8 @@ export default function Header33() {
             className="navbar-collapse offcanvas offcanvas-nav offcanvas-start"
             tabIndex={-1}
             id="offcanvas-nav"
+            data-bs-scroll="true"
+            data-bs-backdrop="true"
           >
             <div className="offcanvas-header xl:!hidden lg:!hidden flex items-center justify-between flex-row p-6">
               <h3 className="!text-white xl:!text-[1.5rem] !text-[calc(1.275rem_+_0.3vw)] !mb-0">

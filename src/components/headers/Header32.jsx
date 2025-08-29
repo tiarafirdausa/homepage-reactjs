@@ -13,7 +13,7 @@ export default function Header32({
   // parentClass = "relative wrapper",
   parentClass = "fixed top-0 w-full z-50", // Modified classes
   navClass = "navbar navbar-expand-lg center-nav transparent navbar-light",
-  colorClass = "!bg-[#ffffff]" 
+  colorClass = "!bg-[#ffffff]",
 }) {
   useStickyNavbar();
   const [logo, setLogo] = useState("/assets/img/logo-dark.png");
@@ -55,7 +55,11 @@ export default function Header32({
               </div>
             </Link>
           </div>
-          <div className="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
+          <div
+            className="navbar-collapse offcanvas offcanvas-nav offcanvas-start"
+            data-bs-scroll="true"
+            data-bs-backdrop="true"
+          >
             <div className="offcanvas-header xl:!hidden lg:!hidden flex items-center justify-between flex-row p-6">
               <h3 className="!text-white xl:!text-[1.5rem] !text-[calc(1.275rem_+_0.3vw)] !mb-0">
                 {shortTitle}

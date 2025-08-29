@@ -41,6 +41,9 @@ const API = {
   BANNERS: {
     GET_ALL_BANNERS: () => `${BASE_URL}${BASE_API}/banners`,
   },
+  LINKS: {
+        GET_ALL_LINKS: () => `${BASE_URL}${BASE_API}/links`,
+    },
   SETTINGS: `${BASE_URL}${BASE_API}/settings`,
   SOCIALS: `${BASE_URL}${BASE_API}/socials`,
 };
