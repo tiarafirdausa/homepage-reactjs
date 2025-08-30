@@ -4,11 +4,13 @@ import React, { lazy, Suspense, useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { getMenuWithItems } from "@/services/menuService";
 
+// Menggunakan lazy() untuk memuat komponen secara dinamis (lazy loading)
 const PageContent = lazy(() => import("@/pages/projects/single-project3"));
 const PostList = lazy(() => import("@/pages/blogs/blog2/index"));
 const PostDetail = lazy(() => import("@/pages/blogs/blog-post2/index"));
-const DemoPage14 = lazy(() => import("@/pages/homes/demo14/index"));
+const Media = lazy(() => import("@/pages/homes/demo14/index"));
 const NotFoundPage = lazy(() => import("@/pages/utility/404-page/index"));
+const Link = lazy(() => import("@/pages/career/career"));
 
 const AppRoutes = ({ DemoPage15, SigninPage }) => {
   const [menuItems, setMenuItems] = useState([]);
@@ -33,7 +35,7 @@ const AppRoutes = ({ DemoPage15, SigninPage }) => {
   }
 
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route path="/" element={<DemoPage15 />} />
         <Route path="/signin" element={<SigninPage />} />
@@ -47,7 +49,7 @@ const AppRoutes = ({ DemoPage15, SigninPage }) => {
               element={<PageContent slug={item.url.replace(/^\//, '')} />}
             />
           ))}
-          
+
         {menuItems
           .filter((item) => item.type === 'post' || item.type === 'category')
           .map((item) => (
@@ -64,7 +66,17 @@ const AppRoutes = ({ DemoPage15, SigninPage }) => {
             <Route
               key={item.id}
               path={item.url}
-              element={<DemoPage14 />}
+              element={<Media />}
+            />
+          ))}
+
+        {menuItems
+          .filter((item) => item.type === 'link')
+          .map((item) => (
+            <Route
+              key={item.id}
+              path={item.url}
+              element={<Link />}
             />
           ))}
 

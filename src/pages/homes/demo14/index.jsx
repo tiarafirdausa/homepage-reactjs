@@ -11,7 +11,6 @@ export default function DemoPage14() {
       <MetaComponent />
           <div className="grow shrink-0">
             <Header32/>
-            
               <Projects />
           </div>
           <Footer5 />

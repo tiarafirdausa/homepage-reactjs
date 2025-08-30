@@ -132,21 +132,16 @@ export default function Sidebar() {
     </ul>
   );
 
-const renderLinkList = (links) => (
-    // Menggunakan Grid untuk memastikan 5 item per baris
-    <div className="grid grid-cols-5 gap-2 justify-items-center">
+  const renderLinkList = (links) => (
+  <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-5 gap-2 justify-items-center">
       {links.map((link) => (
         <div key={link.id} className="flex flex-col items-center text-center">
           <a href={link.link} target="_blank" rel="noopener noreferrer">
-            <figure className="rounded-full w-12 h-12 mb-1 overflow-hidden">
-              <img
-                className="w-full h-full object-cover"
-                alt={link.judul}
-                src={link.gambar ? `${BASE_URL}${link.gambar}` : 'placeholder.jpg'}
-                width={48}
-                height={48}
-              />
-            </figure>
+            <img
+              src={`${BASE_URL}${link.gambar}`}
+              alt={link.judul}
+              className="w-12 h-12 object-cover rounded-md" 
+            />
           </a>
           <h6 className="text-xs font-semibold !mb-0.5">
             <a
@@ -190,110 +185,102 @@ const renderLinkList = (links) => (
               </nav>
             </>
           );
-        } else if (modul.folder === "media") {
+        }else if (modul.folder === "media") {
+    return (
+      <div className="flex flex-wrap gallery-side">
+        {mediaItems.slice(0, 6).map((collection) => {
+          if (!collection.media || collection.media.length === 0) return null;
+
+          const firstItem = collection.media[0];
+          const thumbnailUrl = firstItem.cropped_url
+            ? `${BASE_URL}${firstItem.cropped_url}`
+            : `${BASE_URL}${firstItem.url}`;
+
           return (
-            <div className="flex flex-wrap gallery-side">
-              {mediaItems.slice(0, 6).map((collection) => {
-                if (!collection.media || collection.media.length === 0)
+            <div
+              key={collection.id}
+              className="media-collection-thumbnail p-[2px] cursor-pointer"
+            >
+              <Gallery>
+                {collection.media.map((media, idx) => {
+                  const isVideo = media.url.toLowerCase().match(/\.(mp4|webm|ogg)$/);
+                  const isImage = media.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/);
+                  const mediaUrl = `${BASE_URL}${media.url}`;
+                  const thumb = media.cropped_url
+                    ? `${BASE_URL}${media.cropped_url}`
+                    : mediaUrl;
+
+                  if (isImage) {
+                    return (
+                      <Item
+                        key={media.id}
+                        original={mediaUrl}
+                        thumbnail={thumb}
+                      >
+                        {({ ref, open }) =>
+                          idx === 0 ? (
+                            <img
+                              ref={ref}
+                              onClick={open}
+                              src={thumbnailUrl}
+                              alt={collection.title || "Media thumbnail"}
+                              className="w-24 h-24 object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer" // Gunakan ukuran tetap
+                            />
+                          ) : (
+                            <span ref={ref} />
+                          )
+                        }
+                      </Item>
+                    );
+                  }
+
+                  if (isVideo) {
+  return (
+    <Item
+      key={media.id}
+      original={mediaUrl}
+      thumbnail={thumb}
+      content={
+        <div className="w-full h-full flex items-center justify-center">
+          <video
+            controls
+            autoPlay
+            className="max-h-[80vh] max-w-[90vw] rounded-md"
+          >
+            <source
+              src={mediaUrl}
+              type={`video/${media.url.split(".").pop()}`}
+            />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      }
+    >
+      {({ ref, open }) =>
+        idx === 0 ? (
+          <img
+            ref={ref}
+            onClick={open}
+            src={thumbnailUrl}
+            alt={collection.title || "Video thumbnail"}
+            className="w-24 h-24 object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer"
+          />
+        ) : (
+          <span ref={ref} />
+        )
+      }
+    </Item>
+  );
+}
                   return null;
-
-                const firstItem = collection.media[0];
-                const thumbnailUrl = firstItem.cropped_url
-                  ? `${BASE_URL}${firstItem.cropped_url}`
-                  : `${BASE_URL}${firstItem.url}`;
-
-                return (
-                  <div
-                    key={collection.id}
-                    className="media-collection-thumbnail w-1/3 p-[2px] cursor-pointer"
-                  >
-                    <Gallery>
-                      {collection.media.map((media, idx) => {
-                        const isVideo = media.url
-                          .toLowerCase()
-                          .match(/\.(mp4|webm|ogg)$/);
-                        const isImage = media.url
-                          .toLowerCase()
-                          .match(/\.(jpeg|jpg|png|gif)$/);
-                        const mediaUrl = `${BASE_URL}${media.url}`;
-                        const thumb = media.cropped_url
-                          ? `${BASE_URL}${media.cropped_url}`
-                          : mediaUrl;
-
-                        if (isImage) {
-                          return (
-                            <Item
-                              key={media.id}
-                              original={mediaUrl}
-                              thumbnail={thumb}
-                            >
-                              {({ ref, open }) =>
-                                idx === 0 ? (
-                                  <img
-                                    ref={ref}
-                                    onClick={open}
-                                    src={thumbnailUrl}
-                                    alt={collection.title || "Media thumbnail"}
-                                    className="w-full h-full object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer"
-                                  />
-                                ) : (
-                                  <span ref={ref} /> // hanya ikut group, tidak ditampilkan
-                                )
-                              }
-                            </Item>
-                          );
-                        }
-
-                        if (isVideo) {
-                          return (
-                            <Item
-                              key={media.id}
-                              original={mediaUrl}
-                              thumbnail={thumb}
-                              content={
-                                <div className="w-full h-full flex items-center justify-center">
-                                  <video
-                                    controls
-                                    autoPlay
-                                    className="max-h-[80vh] max-w-[90vw] rounded-md"
-                                  >
-                                    <source
-                                      src={mediaUrl}
-                                      type={`video/${media.url
-                                        .split(".")
-                                        .pop()}`}
-                                    />
-                                    Your browser does not support the video tag.
-                                  </video>
-                                </div>
-                              }
-                            >
-                              {({ ref, open }) =>
-                                idx === 0 ? (
-                                  <img
-                                    ref={ref}
-                                    onClick={open}
-                                    src={thumbnailUrl}
-                                    alt={collection.title || "Video thumbnail"}
-                                    className="w-full h-full object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer"
-                                  />
-                                ) : (
-                                  <span ref={ref} />
-                                )
-                              }
-                            </Item>
-                          );
-                        }
-
-                        return null;
-                      })}
-                    </Gallery>
-                  </div>
-                );
-              })}
+                })}
+              </Gallery>
             </div>
           );
-        } else if (modul.folder === "link") {
+        })}
+      </div>
+    );
+  } else if (modul.folder === "link") {
           return renderLinkList(links);
         }
 
