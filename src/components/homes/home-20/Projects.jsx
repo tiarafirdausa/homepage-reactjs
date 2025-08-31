@@ -1,3 +1,5 @@
+// src/components/Media.jsx
+
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Gallery, Item } from "react-photoswipe-gallery";
@@ -136,125 +138,108 @@ export default function Projects() {
           {/* Project Items */}
           <div
             ref={isotopContainer}
-            className="flex flex-wrap mx-[-15px] xl:mx-[-20px] lg:mx-[-20px] md:mx-[-20px] !mt-[-50px] xl:!mt-[-80px] lg:!mt-[-80px] md:!mt-[-80px] max-w-full isotope"
+            className="flex flex-wrap mx-[-15px] xl:mx-[-20px] lg:mx-[-20px] md:mx-[-20px] !mt-[-50px] xl:!mt-[80px] lg:!mt-[80px] md:!mt-[80px] max-w-full isotope"
           >
-            {projectCollections.map((projectCollection) => (
-              <div
-                key={projectCollection.id}
-                className={`project item group md:w-6/12 lg:w-6/12 xl:w-4/12 w-full flex-[0_0_auto] xl:!px-[20px] lg:!px-[20px] md:!px-[20px] !px-[15px] !mt-[50px] xl:!mt-[80px] lg:!mt-[80px] md:!mt-[80px] max-w-full ${projectCollection.category_name.toLowerCase()}`}
-              >
-                <Gallery>
-                  {projectCollection.media.map((media, index) => {
-                    const isImage = media.url
-                      .toLowerCase()
-                      .match(/\.(jpeg|jpg|png|gif)$/);
-                    const isVideo = media.url
-                      .toLowerCase()
-                      .match(/\.(mp4|webm|ogg)$/);
+            {projectCollections.map((projectCollection) => {
+              const mainMedia = projectCollection.media[0];
+              if (!mainMedia) return null; // Skip if no media items exist
 
-                    // Image
-                    if (isImage) {
-                      const thumbnailUrl = media.cropped_url
-                        ? `${BASE_URL}${media.cropped_url}`
-                        : `${BASE_URL}${media.url}`;
-                      const originalUrl = `${BASE_URL}${media.url}`;
-                      const isFirst = index === 0;
-                      const itemStyle = isFirst ? {} : { display: "none" };
-
-                      return (
-                        <div key={media.id} style={itemStyle}>
-                          <Item original={originalUrl} thumbnail={thumbnailUrl}>
-                            {({ ref, open }) => (
-                              <figure className="!rounded-[.4rem] !mb-6 relative image-container">
-                                <img
-                                  className="!rounded-[.4rem] image-item"
-                                  src={thumbnailUrl}
-                                  alt={projectCollection.title}
-                                  ref={ref}
-                                  onClick={open}
-                                />
-                                <a
-                                  className="item-link absolute w-[2.2rem] h-[2.2rem] !leading-[2.2rem] z-[1] transition-all duration-[0.3s] ease-in-out opacity-0 !text-[#343f52] shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.02)] text-[1rem] flex items-center justify-center rounded-[100%] right-0 bottom-4 bg-[rgba(255,255,255,.7)] hover:bg-[rgba(255,255,255,.9)] hover:!text-[#343f52] group-hover:opacity-100 group-hover:right-[1rem]"
-                                  onClick={open}
-                                  data-gallery="projects-group"
-                                >
-                                  <i className="uil uil-focus-add" />
-                                </a>
-                              </figure>
-                            )}
-                          </Item>
-                        </div>
-                      );
-                    }
-
-                    // Video
-                    if (isVideo) {
-                      const videoUrl = `${BASE_URL}${media.url}`;
-                      const thumbnailUrl = media.cropped_url
-                        ? `${BASE_URL}${media.cropped_url}`
-                        : "/video-thumbnail-placeholder.jpg"; // fallback poster
-                      const isFirst = index === 0;
-                      const itemStyle = isFirst ? {} : { display: "none" };
-
-                      return (
-                        <div key={media.id} style={itemStyle}>
-                          <Item
-                            original={videoUrl}
-                            content={
-                              <div className="w-full h-full flex items-center justify-center">
-                              <video controls style={{ maxWidth: "100%" }}>
-                                <source src={videoUrl} type="video/mp4" />
-                                Your browser does not support the video tag.
-                              </video>
-                              </div>
-                            }
-                            thumbnail={thumbnailUrl}
+              return (
+                <div
+                  key={projectCollection.id}
+                  className={`project item group md:w-6/12 lg:w-6/12 xl:w-4/12 w-full flex-[0_0_auto] xl:!px-[20px] lg:!px-[20px] md:!px-[20px] !px-[15px] !mt-[50px] xl:!mt-[80px] lg:!mt-[80px] md:!mt-[80px] max-w-full ${projectCollection.category_name.toLowerCase()}`}
+                >
+                  <Gallery>
+                    {/* The visible thumbnail and first gallery item */}
+                    <Item
+                      original={`${BASE_URL}${projectCollection.original_featured_image}`}
+                      thumbnail={`${BASE_URL}${projectCollection.featured_image}`}
+                      caption={projectCollection.title}
+                    >
+                      {({ ref, open }) => (
+                        <figure className="!rounded-[.4rem] !mb-6 relative image-container">
+                          <img
+                            className="!rounded-[.4rem] image-item"
+                            src={`${BASE_URL}${projectCollection.featured_image}`}
+                            alt={projectCollection.title}
+                            ref={ref}
+                            onClick={open}
+                          />
+                          <a
+                            className="item-link absolute w-[2.2rem] h-[2.2rem] !leading-[2.2rem] z-[1] transition-all duration-[0.3s] ease-in-out opacity-0 !text-[#343f52] shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.02)] text-[1rem] flex items-center justify-center rounded-[100%] right-0 bottom-4 bg-[rgba(255,255,255,.7)] hover:bg-[rgba(255,255,255,.9)] hover:!text-[#343f52] group-hover:opacity-100 group-hover:right-[1rem]"
+                            onClick={open}
+                            data-gallery="projects-group"
                           >
-                            {({ ref, open }) => (
-                              <figure className="!rounded-[.4rem] !mb-6 relative image-container">
-                                <img
-                                  className="!rounded-[.4rem] image-item"
-                                  src={thumbnailUrl}
-                                  alt={projectCollection.title}
-                                  ref={ref}
-                                  onClick={open}
-                                />
-                                <a
-                                  className="item-link absolute w-[2.2rem] h-[2.2rem] !leading-[2.2rem] z-[1] transition-all duration-[0.3s] ease-in-out opacity-0 !text-[#343f52] shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.02)] text-[1rem] flex items-center justify-center rounded-[100%] right-0 bottom-4 bg-[rgba(255,255,255,.7)] hover:bg-[rgba(255,255,255,.9)] hover:!text-[#343f52] group-hover:opacity-100 group-hover:right-[1rem]"
-                                  onClick={open}
-                                  data-gallery="projects-group"
-                                >
-                                  <i className="uil uil-play" />
-                                </a>
-                              </figure>
-                            )}
-                          </Item>
-                        </div>
-                      );
-                    }
+                            <i className="uil uil-focus-add" />
+                          </a>
+                        </figure>
+                      )}
+                    </Item>
 
-                    return null;
-                  })}
-                </Gallery>
+                    {/* Hidden items for the rest of the media array */}
+                    {projectCollection.media.map((media) => {
+                      const isImage = media.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/);
+                      const isVideo = media.url.toLowerCase().match(/\.(mp4|webm|ogg)$/);
+                      const originalUrl = `${BASE_URL}${media.url}`;
 
-                {/* Project Details */}
-                <div className="project-details flex justify-center flex-col">
-                  <div className="post-header">
-                    <h2 className="post-title h3 !text-[1.1rem] !leading-[1.4]">
-                      <Link
-                        to={`/single-project`}
-                        className="!text-[#343f52] hover:!text-[#3f78e0]"
-                      >
-                        {projectCollection.title}
-                      </Link>
-                    </h2>
-                    <div className="!tracking-[0.02rem] text-[0.7rem] font-bold !mb-[0.4rem] !text-[#9499a3]">
+                      if (isImage) {
+                        return (
+                          <div key={media.id} style={{ display: 'none' }}>
+                            <Item original={originalUrl} thumbnail={`${BASE_URL}${projectCollection.featured_image}`} caption={projectCollection.title}>
+                              {({ ref, open }) => (
+                                <img ref={ref} onClick={open} src={`${BASE_URL}${projectCollection.featured_image}`} alt={projectCollection.title} />
+                              )}
+                            </Item>
+                          </div>
+                        );
+                      }
+
+                      if (isVideo) {
+                        return (
+                          <div key={media.id} style={{ display: 'none' }}>
+                            <Item
+                              original={originalUrl}
+                              content={
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <video controls style={{ maxWidth: "100%" }}>
+                                    <source src={originalUrl} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                </div>
+                              }
+                              thumbnail={`${BASE_URL}${projectCollection.featured_image}`}
+                              caption={projectCollection.title}
+                            >
+                              {({ ref, open }) => (
+                                <img ref={ref} onClick={open} src={`${BASE_URL}${projectCollection.featured_image}`} alt={projectCollection.title} />
+                              )}
+                            </Item>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                  </Gallery>
+
+                  {/* Project Details */}
+                  <div className="project-details flex justify-center flex-col">
+                    <div className="post-header">
+                      <h2 className="post-title h3 !text-[1.1rem] !leading-[1.4]">
+                        <Link
+                          to={`/single-project`}
+                          className="!text-[#343f52] hover:!text-[#3f78e0]"
+                        >
+                          {projectCollection.title}
+                        </Link>
+                      </h2>
+                      <div className="!tracking-[0.02rem] text-[0.7rem] font-bold !mb-[0.4rem] !text-[#9499a3]">
                         {stripHtmlTags(projectCollection.caption)}
                       </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

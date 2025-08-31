@@ -22,7 +22,9 @@ export default function Media({ title }) {
     const fetchMedia = async () => {
       try {
         const response = await getMedia();
-        setMediaCollections(response.data);
+        // Limit the data to the first 10 items
+        const limitedData = response.data.slice(0, 10);
+        setMediaCollections(limitedData);
       } catch (err) {
         setError("Failed to fetch media.");
         console.error("Error fetching media:", err);
@@ -77,46 +79,61 @@ export default function Media({ title }) {
                 575: { slidesPerView: 1 },
                 768: { slidesPerView: 2 },
                 992: { slidesPerView: 2 },
-                1200: { slidesPerView: 3 },
+                1200: { slidesPerView: 4 },
               }}
             >
               {mediaCollections.map((mediaCollection) => (
                 <SwiperSlide key={mediaCollection.id} className="swiper-slide group">
                   <Gallery>
+                    {mediaCollection.featured_image && (
+                      <Item
+                        original={`${BASE_URL}${mediaCollection.original_featured_image}`} // Menggunakan original_featured_image di sini
+                        thumbnail={`${BASE_URL}${mediaCollection.featured_image}`}
+                        caption={mediaCollection.title}
+                      >
+                        {({ ref, open }) => (
+                          <figure className="!rounded-[.4rem] !mb-6">
+                            <img
+                              className="!rounded-[.4rem] w-full h-full object-cover"
+                              src={`${BASE_URL}${mediaCollection.featured_image}`}
+                              alt={mediaCollection.title}
+                              ref={ref}
+                              onClick={open}
+                            />
+                            <a
+                              className="item-link absolute w-[2.2rem] h-[2.2rem] !leading-[2.2rem] z-[1] transition-all duration-[0.3s] ease-in-out opacity-0 !text-[#343f52] shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.02)] text-[1rem] flex items-center justify-center rounded-[100%] right-0 bottom-4 bg-[rgba(255,255,255,.7)] hover:bg-[rgba(255,255,255,.9)] hover:!text-[#343f52] group-hover:opacity-100 group-hover:right-[1rem]"
+                              onClick={open}
+                              data-gallery="projects-group"
+                            >
+                              <i className="uil uil-focus-add" />
+                            </a>
+                          </figure>
+                        )}
+                      </Item>
+                    )}
+
+                    {/* Tambahkan item galeri lain dari mediaCollection.media di sini */}
                     {mediaCollection.media.map((media, index) => {
+                      // Pastikan untuk tidak menduplikasi item pertama jika featured_image adalah bagian dari media
                       const isImage = media.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/);
                       const isVideo = media.url.toLowerCase().match(/\.(mp4|webm|ogg)$/);
+                      const originalUrl = `${BASE_URL}${media.url}`;
 
-                      if (!isImage && !isVideo) {
+                      // Hindari duplikasi jika featured_image sama dengan media[0]
+                      if (
+                        index === 0 &&
+                        mediaCollection.featured_image &&
+                        media.url.endsWith(mediaCollection.featured_image.split('/').pop())
+                      ) {
                         return null;
                       }
 
-                      const thumbnailUrl = media.cropped_url ? `${BASE_URL}${media.cropped_url}` : `${BASE_URL}${media.url}`;
-                      const originalUrl = `${BASE_URL}${media.url}`;
-                      const isFirst = index === 0;
-                      const itemStyle = isFirst ? {} : { display: 'none' };
-
                       if (isImage) {
                         return (
-                          <div key={media.id} style={itemStyle}>
-                            <Item original={originalUrl} thumbnail={thumbnailUrl}>
+                          <div key={media.id} style={{ display: 'none' }}>
+                            <Item original={originalUrl} thumbnail={originalUrl} caption={mediaCollection.title}>
                               {({ ref, open }) => (
-                                <figure className="!rounded-[.4rem] !mb-6">
-                                  <img
-                                    className="!rounded-[.4rem] w-full h-full object-cover"
-                                    src={thumbnailUrl}
-                                    alt={mediaCollection.title}
-                                    ref={ref}
-                                    onClick={open}
-                                  />
-                                  <a
-                                    className="item-link absolute w-[2.2rem] h-[2.2rem] !leading-[2.2rem] z-[1] transition-all duration-[0.3s] ease-in-out opacity-0 !text-[#343f52] shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.02)] text-[1rem] flex items-center justify-center rounded-[100%] right-0 bottom-4 bg-[rgba(255,255,255,.7)] hover:bg-[rgba(255,255,255,.9)] hover:!text-[#343f52] group-hover:opacity-100 group-hover:right-[1rem]"
-                                    onClick={open}
-                                    data-gallery="projects-group"
-                                  >
-                                    <i className="uil uil-focus-add" />
-                                  </a>
-                                </figure>
+                                <img ref={ref} onClick={open} src={originalUrl} alt={mediaCollection.title} />
                               )}
                             </Item>
                           </div>
@@ -125,36 +142,22 @@ export default function Media({ title }) {
 
                       if (isVideo) {
                         return (
-                          <div key={media.id} style={itemStyle}>
+                          <div key={media.id} style={{ display: 'none' }}>
                             <Item
                               original={originalUrl}
                               content={
-                              <div className="w-full h-full flex items-center justify-center">
-                                <video controls style={{ maxWidth: "100%" }}>
-                                  <source src={originalUrl} type="video/mp4" />
-                                  Your browser does not support the video tag.
-                                </video>
-                              </div>
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <video controls style={{ maxWidth: "100%" }}>
+                                    <source src={originalUrl} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                </div>
                               }
-                              thumbnail={thumbnailUrl}
+                              thumbnail={originalUrl}
+                              caption={mediaCollection.title}
                             >
                               {({ ref, open }) => (
-                                <figure className="!rounded-[.4rem] !mb-6 relative">
-                                  <img
-                                    className="!rounded-[.4rem] w-full h-full object-cover"
-                                    src={thumbnailUrl}
-                                    alt={mediaCollection.title}
-                                    ref={ref}
-                                    onClick={open}
-                                  />
-                                  <a
-                                    className="item-link absolute w-[2.2rem] h-[2.2rem] !leading-[2.2rem] z-[1] transition-all duration-[0.3s] ease-in-out opacity-0 !text-[#343f52] shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.02)] text-[1rem] flex items-center justify-center rounded-[100%] right-0 bottom-4 bg-[rgba(255,255,255,.7)] hover:bg-[rgba(255,255,255,.9)] hover:!text-[#343f52] group-hover:opacity-100 group-hover:right-[1rem]"
-                                    onClick={open}
-                                    data-gallery="projects-group"
-                                  >
-                                    <i className="uil uil-play" />
-                                  </a>
-                                </figure>
+                                <img ref={ref} onClick={open} src={originalUrl} alt={mediaCollection.title} />
                               )}
                             </Item>
                           </div>
@@ -177,8 +180,8 @@ export default function Media({ title }) {
                       <div className="!tracking-[0.02rem] text-[0.7rem] font-bold !mb-[0.4rem] !text-[#9499a3]">
                         {stripHtmlTags(mediaCollection.caption)}
                       </div>
-                    </div>
                   </div>
+                </div>
                 </SwiperSlide>
               ))}
             </Swiper>
