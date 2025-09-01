@@ -109,7 +109,7 @@ export default function Projects() {
 
         <div className="itemgrid grid-view projects-masonry !pt-10">
           {/* Filter */}
-          <div className="isotope-filter !relative !z-[5] filter !mb-10">
+          <div className="isotope-filter !relative !z-[5] filter !mb-4">
             <ul className="inline m-0 p-0 list-none">
               {filters.map(({ name, filter }) => (
                 <li
@@ -138,7 +138,7 @@ export default function Projects() {
           {/* Project Items */}
           <div
             ref={isotopContainer}
-            className="flex flex-wrap mx-[-15px] xl:mx-[-20px] lg:mx-[-20px] md:mx-[-20px] !mt-[-50px] xl:!mt-[80px] lg:!mt-[80px] md:!mt-[80px] max-w-full isotope"
+            className="flex flex-wrap mx-[-15px] xl:mx-[-20px] lg:mx-[-20px] md:mx-[-20px] !mt-[-50px] xl:!mt-[-80px] lg:!mt-[-80px] md:!mt-[-80px] max-w-full isotope"
           >
             {projectCollections.map((projectCollection) => {
               const mainMedia = projectCollection.media[0];
