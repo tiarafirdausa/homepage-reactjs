@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { addComment } from "@/services/commentService";
+import { BASE_URL } from "@/config/url";
 
 const CommentBox = ({ postId }) => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,7 @@ const CommentBox = ({ postId }) => {
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/csrf-token", {
+        const response = await axios.get(`${BASE_URL}/csrf-token`, {
           withCredentials: true,
         });
         setCsrfToken(response.data.csrfToken);
