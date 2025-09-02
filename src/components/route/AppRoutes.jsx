@@ -41,43 +41,51 @@ const AppRoutes = ({ DemoPage15, SigninPage }) => {
         <Route path="/signin" element={<SigninPage />} />
 
         {menuItems
-          .filter((item) => item.type === 'page')
+          .filter((item) => item.type === "page")
           .map((item) => (
             <Route
               key={item.id}
               path={item.url}
-              element={<PageContent slug={item.url.replace(/^\//, '')} />}
+              element={<PageContent slug={item.url.replace(/^\//, "")} />}
             />
           ))}
 
         {menuItems
-          .filter((item) => item.type === 'post' || item.type === 'category')
+          .filter((item) => item.type === "post" || item.type === "category")
           .map((item) => (
             <Route
               key={item.id}
               path={item.url}
-              element={<PostList type={item.type} slug={item.url.replace(/^\//, '')} />}
+              element={
+                <PostList type={item.type} slug={item.url.replace(/^\//, "")} />
+              }
             />
           ))}
 
         {menuItems
-          .filter((item) => item.type === 'media')
+          .filter(
+            (item) => item.type === "media" || item.type === "media_category"
+          )
           .map((item) => (
             <Route
               key={item.id}
               path={item.url}
-              element={<Media />}
+              element={
+                <Media
+                  categorySlug={
+                    item.type === "media_category"
+                      ? item.url.split("/").pop()
+                      : null
+                  }
+                />
+              }
             />
           ))}
 
         {menuItems
-          .filter((item) => item.type === 'link')
+          .filter((item) => item.type === "link")
           .map((item) => (
-            <Route
-              key={item.id}
-              path={item.url}
-              element={<Link />}
-            />
+            <Route key={item.id} path={item.url} element={<Link />} />
           ))}
 
         <Route path="/kategori/:slug" element={<PostList type="category" />} />

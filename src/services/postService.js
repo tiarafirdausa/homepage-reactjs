@@ -3,7 +3,7 @@ import axios from "axios";
 import API from "@/config/api";
 
 const addPublishedStatus = (params = {}) => {
-  return { ...params, status: "published" };
+  return { status: "published", ...params };
 };
 
 export const getPosts = async (params = {}) => {
@@ -63,34 +63,14 @@ export const getSinglePostBySlug = async (slug, params = {}) => {
   }
 };
 
-export const getRecentPosts = async (params = {}) => {
-  try {
-    const defaultParams = {
-      "sort[key]": "published_at",
-      "sort[order]": "desc",
-      ...params,
-    };
-    return getPosts(defaultParams);
-  } catch (error) {
-    console.error("Error fetching recent posts:", error);
-    throw error;
-  }
-};
-
 export const getPopularPosts = async (params = {}) => {
   try {
     const defaultParams = {
+      ...params,
       "sort[key]": "hits",
       "sort[order]": "desc",
-      ...params,
     };
-    const baseUrl = API.POSTS.GET_ALL_POST();
-    const publishedParams = addPublishedStatus(defaultParams);
-    const queryString = new URLSearchParams(publishedParams).toString();
-    const url = `${baseUrl}?${queryString}`;
-
-    const response = await axios.get(url);
-    return response.data;
+    return getPosts(defaultParams);
   } catch (error) {
     console.error("Error fetching popular posts:", error);
     throw error;

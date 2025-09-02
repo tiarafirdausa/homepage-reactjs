@@ -1,7 +1,6 @@
 // src/components/Media.jsx
 
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import { getMedia, getMediaCategories } from "@/services/mediaService";
 import { BASE_URL } from "@/config/url";
@@ -13,7 +12,7 @@ const stripHtmlTags = (html) => {
   return doc.body.textContent || "";
 };
 
-export default function Projects() {
+export default function Projects({ categorySlug }) {
   const [projectCollections, setProjectCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,17 +48,25 @@ export default function Projects() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const categoryResponse = await getMediaCategories();
-        const dynamicFilters = categoryResponse.data.map((cat) => ({
-          name: cat.category_name,
-          filter: `.${cat.category_name.toLowerCase()}`,
-        }));
-        const allFilters = [{ name: "All", filter: "*" }, ...dynamicFilters];
-        setFilters(allFilters);
+        if (categorySlug) {
+          const mediaResponse = await getMedia({ category: categorySlug });
+          setProjectCollections(mediaResponse.data);
+          setFilters([]);
+        }
+        else {
+          const categoryResponse = await getMediaCategories();
+          const dynamicFilters = categoryResponse.data.map((cat) => ({
+            name: cat.category_name,
+            filter: `.${cat.category_name.toLowerCase()}`,
+          }));
+          const allFilters = [{ name: "All", filter: "*" }, ...dynamicFilters];
+          setFilters(allFilters);
 
-        const mediaResponse = await getMedia();
-        setProjectCollections(mediaResponse.data);
+          const mediaResponse = await getMedia();
+          setProjectCollections(mediaResponse.data);
+        }
       } catch (err) {
         setError("Failed to fetch data.");
         console.error("Error fetching data:", err);
@@ -68,7 +75,7 @@ export default function Projects() {
       }
     };
     fetchData();
-  }, []);
+  }, [categorySlug]);
 
   useEffect(() => {
     if (!loading && !error) {
@@ -76,7 +83,7 @@ export default function Projects() {
         initIsotop();
       }, 100);
     }
-  }, [loading, error]);
+  }, [loading, error, projectCollections]);
 
   if (loading) {
     return (
@@ -108,32 +115,33 @@ export default function Projects() {
         </div>
 
         <div className="itemgrid grid-view projects-masonry !pt-10">
-          {/* Filter */}
-          <div className="isotope-filter !relative !z-[5] filter !mb-4">
-            <ul className="inline m-0 p-0 list-none">
-              {filters.map(({ name, filter }) => (
-                <li
-                  key={filter}
-                  className={`inline ${
-                    filter !== "*" &&
-                    "before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:ml-2 before:mr-[0.8rem] before:my-0 before:rounded-[100%] before:bg-[rgba(30,34,40,.2)] before:align-[.15rem]"
-                  }`}
-                >
-                  <a
-                    className={`filter-item uppercase !tracking-[0.02rem] text-[0.7rem] font-bold cursor-pointer ${
-                      activeFilter === filter
-                        ? "active"
-                        : "hover:!text-[#3f78e0]"
+          {filters.length > 0 && (
+            <div className="isotope-filter !relative !z-[5] filter !mb-4">
+              <ul className="inline m-0 p-0 list-none">
+                {filters.map(({ name, filter }) => (
+                  <li
+                    key={filter}
+                    className={`inline ${
+                      filter !== "*" &&
+                      "before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:ml-2 before:mr-[0.8rem] before:my-0 before:rounded-[100%] before:bg-[rgba(30,34,40,.2)] before:align-[.15rem]"
                     }`}
-                    data-filter={filter}
-                    onClick={() => handleFilterClick(filter)}
                   >
-                    {name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+                    <a
+                      className={`filter-item uppercase !tracking-[0.02rem] text-[0.7rem] font-bold cursor-pointer ${
+                        activeFilter === filter
+                          ? "active"
+                          : "hover:!text-[#3f78e0]"
+                      }`}
+                      data-filter={filter}
+                      onClick={() => handleFilterClick(filter)}
+                    >
+                      {name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Project Items */}
           <div
@@ -141,8 +149,8 @@ export default function Projects() {
             className="flex flex-wrap mx-[-15px] xl:mx-[-20px] lg:mx-[-20px] md:mx-[-20px] !mt-[-50px] xl:!mt-[-80px] lg:!mt-[-80px] md:!mt-[-80px] max-w-full isotope"
           >
             {projectCollections.map((projectCollection) => {
-              const mainMedia = projectCollection.media[0];
-              if (!mainMedia) return null; // Skip if no media items exist
+                  if (!projectCollection.featured_image) return null;
+
 
               return (
                 <div
@@ -150,7 +158,6 @@ export default function Projects() {
                   className={`project item group md:w-6/12 lg:w-6/12 xl:w-4/12 w-full flex-[0_0_auto] xl:!px-[20px] lg:!px-[20px] md:!px-[20px] !px-[15px] !mt-[50px] xl:!mt-[80px] lg:!mt-[80px] md:!mt-[80px] max-w-full ${projectCollection.category_name.toLowerCase()}`}
                 >
                   <Gallery>
-                    {/* The visible thumbnail and first gallery item */}
                     <Item
                       original={`${BASE_URL}${projectCollection.original_featured_image}`}
                       thumbnail={`${BASE_URL}${projectCollection.featured_image}`}
@@ -176,7 +183,6 @@ export default function Projects() {
                       )}
                     </Item>
 
-                    {/* Hidden items for the rest of the media array */}
                     {projectCollection.media.map((media) => {
                       const isImage = media.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/);
                       const isVideo = media.url.toLowerCase().match(/\.(mp4|webm|ogg)$/);
@@ -221,16 +227,10 @@ export default function Projects() {
                     })}
                   </Gallery>
 
-                  {/* Project Details */}
                   <div className="project-details flex justify-center flex-col">
                     <div className="post-header">
-                      <h2 className="post-title h3 !text-[1.1rem] !leading-[1.4]">
-                        <Link
-                          to={`/single-project`}
-                          className="!text-[#343f52] hover:!text-[#3f78e0]"
-                        >
-                          {projectCollection.title}
-                        </Link>
+                      <h2 className="post-title h3 !text-[1.1rem] !leading-[1.4] !text-[#343f52]">
+                        {projectCollection.title}
                       </h2>
                       <div className="!tracking-[0.02rem] text-[0.7rem] font-bold !mb-[0.4rem] !text-[#9499a3]">
                         {stripHtmlTags(projectCollection.caption)}

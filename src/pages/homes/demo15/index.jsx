@@ -11,6 +11,8 @@ import PostTerbaru from "@/components/modul/post-terbaru";
 import Link from "@/components/modul/links";
 
 import { getHomeModules } from "@/services/modulService";
+import { getPosts } from "@/services/postService";
+import { getBanners } from "@/services/bannerService";
 
 const componentMap = {
   "popular-post": PostTerpopuler,
@@ -22,20 +24,48 @@ const componentMap = {
 
 export default function DemoPage15() {
   const [homeModules, setHomeModules] = useState([]);
+  const [heroItems, setHeroItems] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAllModules = async () => {
+    const fetchAllData = async () => {
       try {
-        const modules = await getHomeModules();
+        const [modules, postsResponse, bannersResponse] = await Promise.all([
+          getHomeModules(),
+          getPosts({ pageSize: 3 }),
+          getBanners(),
+        ]);
+
         setHomeModules(modules);
+
+        const posts = postsResponse.data.map((post) => ({
+          ...post,
+          type: "post",
+          heroTitle: post.title,
+          heroExcerpt: post.excerpt,
+          heroImage: post.featured_image,
+          heroLink: `/post/${post.slug}`,
+        }));
+
+        const banners = bannersResponse.data.map((banner) => ({
+          ...banner,
+          type: "banner",
+          heroTitle: banner.judul,
+          heroExcerpt: banner.keterangan,
+          heroImage: banner.gambar,
+          heroLink: banner.link,
+        }));
+
+        const combinedItems = [...banners, ...posts];
+        setHeroItems(combinedItems);
+
       } catch (error) {
-        console.error("Gagal mengambil data modul home:", error);
+        console.error("Gagal mengambil data halaman utama:", error);
       } finally {
         setPageLoading(false);
       }
     };
-    fetchAllModules();
+    fetchAllData();
   }, []);
 
   const renderModules = () => {
@@ -46,15 +76,13 @@ export default function DemoPage15() {
     return homeModules.map((modul) => {
       const Component = componentMap[modul.folder];
       if (Component) {
-        if (
-          modul.folder === "popular-post" ||
-          modul.folder === "recent-post" ||
-          modul.folder === "media" ||
-          modul.folder === "profile" ||
-          modul.folder === "link" 
-        ) {
-          return <Component key={modul.id_modul} className="!mt-16" title={modul.judul} />;
-        }
+        return (
+          <Component
+            key={modul.id_modul}
+            className="!mt-16"
+            title={modul.judul}
+          />
+        );
       }
       return null;
     });
@@ -66,10 +94,9 @@ export default function DemoPage15() {
       <div className="page-frame !bg-[#e0e9fa]">
         <div className="grow shrink-0">
           <Header32 colorClass="!bg-[#e0e9fa]" />
-          <div className="pt-[2rem]"> 
-              <Hero />
-            <section className="wrapper bg-[#21262c] opacity-100">
-            </section>
+          <div className="pt-[2rem]">
+            {!pageLoading && heroItems.length > 0 && <Hero heroItems={heroItems} />}
+            <section className="wrapper bg-[#21262c] opacity-100"></section>
             {renderModules()}
             <Footer5 />
           </div>

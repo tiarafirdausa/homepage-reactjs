@@ -9,7 +9,7 @@ import { getMedia } from "@/services/mediaService";
 import { BASE_URL } from "@/config/url";
 
 const stripHtmlTags = (html) => {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const doc = new DOMParser().parseFromString(html, "text/html");
   return doc.body.textContent || "";
 };
 
@@ -22,7 +22,6 @@ export default function Media({ title }) {
     const fetchMedia = async () => {
       try {
         const response = await getMedia();
-        // Limit the data to the first 10 items
         const limitedData = response.data.slice(0, 10);
         setMediaCollections(limitedData);
       } catch (err) {
@@ -61,7 +60,8 @@ export default function Media({ title }) {
                 {title}
               </h2>
               <h3 className="xl:!text-[1.9rem] !text-[calc(1.315rem_+_0.78vw)] !leading-[1.25] !mb-10 xxl:!px-10">
-                Jelajahi galeri kami untuk melihat dokumentasi visual dari proyek dan acara-acara kami.
+                Jelajahi galeri kami untuk melihat dokumentasi visual dari
+                proyek dan acara-acara kami.
               </h3>
             </div>
           </div>
@@ -83,7 +83,10 @@ export default function Media({ title }) {
               }}
             >
               {mediaCollections.map((mediaCollection) => (
-                <SwiperSlide key={mediaCollection.id} className="swiper-slide group">
+                <SwiperSlide
+                  key={mediaCollection.id}
+                  className="swiper-slide group"
+                >
                   <Gallery>
                     {mediaCollection.featured_image && (
                       <Item
@@ -112,28 +115,40 @@ export default function Media({ title }) {
                       </Item>
                     )}
 
-                    {/* Tambahkan item galeri lain dari mediaCollection.media di sini */}
                     {mediaCollection.media.map((media, index) => {
-                      // Pastikan untuk tidak menduplikasi item pertama jika featured_image adalah bagian dari media
-                      const isImage = media.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/);
-                      const isVideo = media.url.toLowerCase().match(/\.(mp4|webm|ogg)$/);
+                      const isImage = media.url
+                        .toLowerCase()
+                        .match(/\.(jpeg|jpg|png|gif)$/);
+                      const isVideo = media.url
+                        .toLowerCase()
+                        .match(/\.(mp4|webm|ogg)$/);
                       const originalUrl = `${BASE_URL}${media.url}`;
 
-                      // Hindari duplikasi jika featured_image sama dengan media[0]
                       if (
                         index === 0 &&
                         mediaCollection.featured_image &&
-                        media.url.endsWith(mediaCollection.featured_image.split('/').pop())
+                        media.url.endsWith(
+                          mediaCollection.featured_image.split("/").pop()
+                        )
                       ) {
                         return null;
                       }
 
                       if (isImage) {
                         return (
-                          <div key={media.id} style={{ display: 'none' }}>
-                            <Item original={originalUrl} thumbnail={originalUrl} caption={mediaCollection.title}>
+                          <div key={media.id} style={{ display: "none" }}>
+                            <Item
+                              original={originalUrl}
+                              thumbnail={originalUrl}
+                              caption={mediaCollection.title}
+                            >
                               {({ ref, open }) => (
-                                <img ref={ref} onClick={open} src={originalUrl} alt={mediaCollection.title} />
+                                <img
+                                  ref={ref}
+                                  onClick={open}
+                                  src={originalUrl}
+                                  alt={mediaCollection.title}
+                                />
                               )}
                             </Item>
                           </div>
@@ -142,13 +157,16 @@ export default function Media({ title }) {
 
                       if (isVideo) {
                         return (
-                          <div key={media.id} style={{ display: 'none' }}>
+                          <div key={media.id} style={{ display: "none" }}>
                             <Item
                               original={originalUrl}
                               content={
                                 <div className="w-full h-full flex items-center justify-center">
                                   <video controls style={{ maxWidth: "100%" }}>
-                                    <source src={originalUrl} type="video/mp4" />
+                                    <source
+                                      src={originalUrl}
+                                      type="video/mp4"
+                                    />
                                     Your browser does not support the video tag.
                                   </video>
                                 </div>
@@ -157,7 +175,12 @@ export default function Media({ title }) {
                               caption={mediaCollection.title}
                             >
                               {({ ref, open }) => (
-                                <img ref={ref} onClick={open} src={originalUrl} alt={mediaCollection.title} />
+                                <img
+                                  ref={ref}
+                                  onClick={open}
+                                  src={originalUrl}
+                                  alt={mediaCollection.title}
+                                />
                               )}
                             </Item>
                           </div>
@@ -169,19 +192,14 @@ export default function Media({ title }) {
                   </Gallery>
                   <div className="project-details flex justify-center flex-col">
                     <div className="post-header">
-                      <h2 className="post-title h3">
-                        <Link
-                          to={`/single-project`}
-                          className="!text-[#343f52] hover:!text-[#3f78e0]"
-                        >
-                          {mediaCollection.title}
-                        </Link>
+                      <h2 className="post-title h3 !text-[#343f52]">
+                        {mediaCollection.title}
                       </h2>
                       <div className="!tracking-[0.02rem] text-[0.7rem] font-bold !mb-[0.4rem] !text-[#9499a3]">
                         {stripHtmlTags(mediaCollection.caption)}
                       </div>
+                    </div>
                   </div>
-                </div>
                 </SwiperSlide>
               ))}
             </Swiper>

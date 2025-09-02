@@ -3,14 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Gallery, Item } from "react-photoswipe-gallery";
 
-import { getRecentPosts, getPopularPosts } from "@/services/postService";
+import { getPosts, getPopularPosts } from "@/services/postService";
 import { getTags } from "@/services/tagService";
 import { getCategories } from "@/services/categoryService";
 import { getActiveSocials } from "@/services/socialService";
 import { getSettings } from "@/services/settingsService";
 import { getWidgetModules } from "@/services/modulService";
 import { getMedia } from "@/services/mediaService";
-import { getLinks } from "@/services/linkService"; // Import getLinks
+import { getLinks } from "@/services/linkService";
 import { BASE_URL } from "@/config/url";
 import { iconMapping } from "@/utils/iconMapping";
 
@@ -23,7 +23,7 @@ export default function Sidebar() {
   const [popularPosts, setPopularPosts] = useState([]);
   const [widgetModules, setWidgetModules] = useState([]);
   const [mediaItems, setMediaItems] = useState([]);
-  const [links, setLinks] = useState([]); // New state for links
+  const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -40,17 +40,17 @@ export default function Sidebar() {
           widgetModulesData,
           popularPostsData,
           mediaData,
-          linksData, // Fetch links data
+          linksData,
         ] = await Promise.all([
           getCategories(),
           getTags(),
-          getRecentPosts({ pageSize: 3 }),
+          getPosts({ pageSize: 3 }),
           getActiveSocials(),
           getSettings(),
           getWidgetModules(),
           getPopularPosts({ pageSize: 3 }),
           getMedia(),
-          getLinks(), // Call getLinks()
+          getLinks(),
         ]);
 
         setCategories(categoriesData.categories || []);
@@ -61,7 +61,7 @@ export default function Sidebar() {
         setSettings(settingsData.general || {});
         setWidgetModules(widgetModulesData || []);
         setMediaItems(mediaData.data || []);
-        setLinks(linksData.data || []); // Set links state
+        setLinks(linksData.data || []);
       } catch (error) {
         console.error("Failed to fetch sidebar data:", error);
       } finally {
@@ -94,7 +94,7 @@ export default function Sidebar() {
           <figure className="!rounded-[.4rem] float-left w-14 !h-[4.5rem]">
             <Link to={`/post/${post.slug}`}>
               <img
-                className="!rounded-[.4rem]"
+                className="!rounded-[.4rem]  w-full h-full object-cover"
                 alt={post.title}
                 src={`${BASE_URL}${post.featured_image}`}
                 width={100}
@@ -117,13 +117,10 @@ export default function Sidebar() {
                 <span>{new Date(post.published_at).toLocaleDateString()}</span>
               </li>
               <li className="post-comments inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0] before:rounded-[100%] before:align-[.15rem] before:bg-[#aab0bc]">
-                <a
-                  className="!text-[#aab0bc] hover:!text-[#3f78e0] hover:!border-[#3f78e0]"
-                  href="#"
-                >
+                <span className="!text-[#aab0bc]">
                   <i className="uil uil-comment pr-[0.2rem] align-[-.05rem] before:content-['\ea54']" />
-                  0
-                </a>
+                  {post.comment_count || 0}
+                </span>
               </li>
             </ul>
           </div>
@@ -133,31 +130,16 @@ export default function Sidebar() {
   );
 
   const renderLinkList = (links) => (
-  <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-5 gap-2 justify-items-center">
+    <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-5 gap-2 justify-items-center">
       {links.map((link) => (
-        <div key={link.id} className="flex flex-col items-center text-center">
-          <a href={link.link} target="_blank" rel="noopener noreferrer">
-            <img
-              src={`${BASE_URL}${link.gambar}`}
-              alt={link.judul}
-              className="w-12 h-12 object-cover rounded-md" 
-            />
-          </a>
-          <h6 className="text-xs font-semibold !mb-0.5">
-            <a
-              className="text-[#343f52] hover:text-[#3f78e0]"
-              href={link.link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {link.judul}
-            </a>
-          </h6>
-          <div className="text-[0.6rem] text-[#aab0bc] uppercase tracking-[0.02rem] font-bold">
-            {link.kategori}
-          </div>
-        </div>
-      ))}
+      <a key={link.id} href={link.link} target="_blank" rel="noopener noreferrer">
+        <img
+          src={`${BASE_URL}${link.gambar}`}
+          alt={link.judul} 
+          className="w-12 h-12 object-cover rounded-md"
+        />
+      </a>
+    ))}
     </div>
   );
 
@@ -185,102 +167,109 @@ export default function Sidebar() {
               </nav>
             </>
           );
-        }else if (modul.folder === "media") {
-    return (
-      <div className="flex flex-wrap gallery-side">
-        {mediaItems.slice(0, 6).map((collection) => {
-          if (!collection.media || collection.media.length === 0) return null;
-
-          const firstItem = collection.media[0];
-          const thumbnailUrl = firstItem.cropped_url
-            ? `${BASE_URL}${firstItem.cropped_url}`
-            : `${BASE_URL}${firstItem.url}`;
-
+        } else if (modul.folder === "media") {
           return (
-            <div
-              key={collection.id}
-              className="media-collection-thumbnail p-[2px] cursor-pointer"
-            >
-              <Gallery>
-                {collection.media.map((media, idx) => {
-                  const isVideo = media.url.toLowerCase().match(/\.(mp4|webm|ogg)$/);
-                  const isImage = media.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/);
-                  const mediaUrl = `${BASE_URL}${media.url}`;
-                  const thumb = media.cropped_url
-                    ? `${BASE_URL}${media.cropped_url}`
-                    : mediaUrl;
-
-                  if (isImage) {
-                    return (
-                      <Item
-                        key={media.id}
-                        original={mediaUrl}
-                        thumbnail={thumb}
-                      >
-                        {({ ref, open }) =>
-                          idx === 0 ? (
-                            <img
-                              ref={ref}
-                              onClick={open}
-                              src={thumbnailUrl}
-                              alt={collection.title || "Media thumbnail"}
-                              className="w-24 h-24 object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer" // Gunakan ukuran tetap
-                            />
-                          ) : (
-                            <span ref={ref} />
-                          )
-                        }
-                      </Item>
-                    );
-                  }
-
-                  if (isVideo) {
-  return (
-    <Item
-      key={media.id}
-      original={mediaUrl}
-      thumbnail={thumb}
-      content={
-        <div className="w-full h-full flex items-center justify-center">
-          <video
-            controls
-            autoPlay
-            className="max-h-[80vh] max-w-[90vw] rounded-md"
-          >
-            <source
-              src={mediaUrl}
-              type={`video/${media.url.split(".").pop()}`}
-            />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      }
-    >
-      {({ ref, open }) =>
-        idx === 0 ? (
-          <img
-            ref={ref}
-            onClick={open}
-            src={thumbnailUrl}
-            alt={collection.title || "Video thumbnail"}
-            className="w-24 h-24 object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer"
-          />
-        ) : (
-          <span ref={ref} />
-        )
-      }
-    </Item>
-  );
-}
+            <div className="flex flex-wrap gallery-side">
+              {mediaItems.slice(0, 6).map((collection) => {
+                if (!collection.media || collection.media.length === 0)
                   return null;
-                })}
-              </Gallery>
+
+                const firstItem = collection.media[0];
+                const thumbnailUrl = firstItem.cropped_url
+                  ? `${BASE_URL}${firstItem.cropped_url}`
+                  : `${BASE_URL}${firstItem.url}`;
+
+                return (
+                  <div
+                    key={collection.id}
+                    className="media-collection-thumbnail p-[2px] cursor-pointer"
+                  >
+                    <Gallery>
+                      {collection.media.map((media, idx) => {
+                        const isVideo = media.url
+                          .toLowerCase()
+                          .match(/\.(mp4|webm|ogg)$/);
+                        const isImage = media.url
+                          .toLowerCase()
+                          .match(/\.(jpeg|jpg|png|gif)$/);
+                        const mediaUrl = `${BASE_URL}${media.url}`;
+                        const thumb = media.cropped_url
+                          ? `${BASE_URL}${media.cropped_url}`
+                          : mediaUrl;
+
+                        if (isImage) {
+                          return (
+                            <Item
+                              key={media.id}
+                              original={mediaUrl}
+                              thumbnail={thumb}
+                            >
+                              {({ ref, open }) =>
+                                idx === 0 ? (
+                                  <img
+                                    ref={ref}
+                                    onClick={open}
+                                    src={thumbnailUrl}
+                                    alt={collection.title || "Media thumbnail"}
+                                    className="w-24 h-24 object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer" // Gunakan ukuran tetap
+                                  />
+                                ) : (
+                                  <span ref={ref} />
+                                )
+                              }
+                            </Item>
+                          );
+                        }
+
+                        if (isVideo) {
+                          return (
+                            <Item
+                              key={media.id}
+                              original={mediaUrl}
+                              thumbnail={thumb}
+                              content={
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <video
+                                    controls
+                                    autoPlay
+                                    className="max-h-[80vh] max-w-[90vw] rounded-md"
+                                  >
+                                    <source
+                                      src={mediaUrl}
+                                      type={`video/${media.url
+                                        .split(".")
+                                        .pop()}`}
+                                    />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                </div>
+                              }
+                            >
+                              {({ ref, open }) =>
+                                idx === 0 ? (
+                                  <img
+                                    ref={ref}
+                                    onClick={open}
+                                    src={thumbnailUrl}
+                                    alt={collection.title || "Video thumbnail"}
+                                    className="w-24 h-24 object-cover rounded-[0.2rem] transition-all duration-300 hover:scale-105 cursor-pointer"
+                                  />
+                                ) : (
+                                  <span ref={ref} />
+                                )
+                              }
+                            </Item>
+                          );
+                        }
+                        return null;
+                      })}
+                    </Gallery>
+                  </div>
+                );
+              })}
             </div>
           );
-        })}
-      </div>
-    );
-  } else if (modul.folder === "link") {
+        } else if (modul.folder === "link") {
           return renderLinkList(links);
         }
 

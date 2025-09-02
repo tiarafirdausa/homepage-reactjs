@@ -14,9 +14,9 @@ export default function BlogSingle({ marginTop = true, post, relatedPosts, comme
   }
 
   const sanitizedContent = DOMPurify.sanitize(post.content, {
-    ADD_TAGS: ['iframe'],
-    ADD_ATTR: ['allowfullscreen', 'webkitallowfullscreen', 'mozallowfullscreen', 'frameborder'],
-  });
+    ADD_TAGS: ['iframe'],
+    ADD_ATTR: ['allowfullscreen', 'webkitallowfullscreen', 'mozallowfullscreen', 'frameborder'],
+  });
 
   return (
     <div className={`blog single ${marginTop ? "!mt-[-7rem]" : ""} `}>
@@ -64,8 +64,6 @@ export default function BlogSingle({ marginTop = true, post, relatedPosts, comme
             </article>
           </div>
 
-          <hr />
-          <h3 className="!mb-6">You Might Also Like</h3>
           <RelatedBlogs relatedPosts={relatedPosts} />
 
           <hr />

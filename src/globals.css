@@ -1,6 +1,40 @@
 @import "tailwindcss";
 @import "photoswipe/dist/photoswipe.css";
 
+/* Tambahkan ini ke file CSS global Anda */
+
+/* KUNCI PERBAIKAN: Paksa wrapper untuk meregangkan semua slide */
+.dots-closer.blog .swiper-wrapper {
+  align-items: stretch !important; /* Memaksa semua slide jadi sama tinggi */
+}
+
+/* Atur slide agar menjadi flex container */
+.dots-closer.blog .swiper-slide {
+  height: auto !important; /* Biarkan wrapper yang menentukan tinggi */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Pastikan elemen pembungkus di dalam slide ikut meregang */
+.dots-closer.blog .swiper-slide .item-inner,
+.dots-closer.blog .swiper-slide article {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Jadikan elemen .card sebagai flex container vertikal */
+.dots-closer.blog .swiper-slide .card {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; 
+}
+
+/* Buat .card-body meregang untuk mengisi sisa ruang */
+.dots-closer.blog .swiper-slide .card-body {
+  flex-grow: 1;
+}
+
 .pswp {
   position: fixed;
   top: 0;

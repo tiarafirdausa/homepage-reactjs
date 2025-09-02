@@ -147,7 +147,7 @@ export default function PostTerpopuler({ title }) {
                             )}
                             <li className="post-views inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0] before:rounded-[100%] before:align-[.15rem] before:bg-[#aab0bc]">
                               <i className="uil uil-eye pr-[0.2rem] align-[-.05rem]" />
-                              <span>{post.hits} Views</span>
+                              <span>{post.hits}</span>
                             </li>
                           </ul>
                         </div>

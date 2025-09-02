@@ -3,10 +3,9 @@ import React, { useState, useEffect } from "react";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Link } from "react-router-dom";
-import { getRecentPosts } from "@/services/postService";
+import { getPosts } from "@/services/postService";
 import { BASE_URL } from "@/config/url";
 
-// Utility function to strip HTML tags
 const stripHtmlTags = (html) => {
   if (!html) return "";
   const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -21,7 +20,7 @@ export default function PostTerbaru({ title }) {
   useEffect(() => {
     const fetchRecentPosts = async () => {
       try {
-        const response = await getRecentPosts({ pageSize: 5 });
+        const response = await getPosts({ pageSize: 5 });
         if (response && response.data) {
           setRecentPosts(response.data);
         }
@@ -147,7 +146,7 @@ export default function PostTerbaru({ title }) {
                             )}
                             <li className="post-views inline-block before:content-[''] before:inline-block before:w-[0.2rem] before:h-[0.2rem] before:opacity-50 before:m-[0_.6rem_0] before:rounded-[100%] before:align-[.15rem] before:bg-[#aab0bc]">
                               <i className="uil uil-eye pr-[0.2rem] align-[-.05rem]" />
-                              <span>{post.hits} Views</span>
+                              <span>{post.hits}</span>
                             </li>
                           </ul>
                         </div>
