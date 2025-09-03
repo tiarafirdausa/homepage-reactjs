@@ -1,4 +1,5 @@
 // src/components/headers/Header32.jsx
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useStickyNavbar from "@/hooks/useStickyNavbar";
@@ -10,8 +11,7 @@ import { iconMapping } from "@/utils/iconMapping";
 import { BASE_URL } from "@/config/url";
 
 export default function Header32({
-  // parentClass = "relative wrapper",
-  parentClass = "fixed top-0 w-full z-50", // Modified classes
+  parentClass = "fixed top-0 w-full z-50",
   navClass = "navbar navbar-expand-lg center-nav transparent navbar-light",
   colorClass = "!bg-[#ffffff]",
 }) {
@@ -44,8 +44,8 @@ export default function Header32({
   return (
     <header className={`${parentClass} ${colorClass}`}>
       <nav className={navClass} style={{ "--current-color": "#3f78e0" }}>
-        <div className="container xl:!flex-row lg:!flex-row !flex-nowrap items-center">
-          <div className="navbar-brand w-full !py-0">
+        <div className="container xl:!flex-row lg:!flex-row !flex-nowrap items-center lg:!justify-between">
+          <div className="navbar-brand !py-0">
             <Link to={`/`}>
               <div className="flex items-center">
                 <img src={logo} alt="site logo" width={60} height={60} />
@@ -71,7 +71,7 @@ export default function Header32({
                 aria-label="Close"
               />
             </div>
-            <div className="offcanvas-body xl:!ml-auto lg:!ml-auto flex flex-col !h-full">
+            <div className="offcanvas-body flex flex-col lg:!flex-row !h-full lg:justify-center lg:!grow">
               <Nav />
               <div className="offcanvas-footer xl:!hidden lg:!hidden">
                 <div>
@@ -100,7 +100,7 @@ export default function Header32({
               </div>
             </div>
           </div>
-          <div className="navbar-other w-full !flex !ml-auto">
+          <div className="navbar-other !flex !ml-auto">
             <ul className="navbar-nav !flex-row !items-center !ml-auto">
               <li className="nav-item hidden xl:block lg:block md:block">
                 <Link

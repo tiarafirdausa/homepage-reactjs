@@ -13,15 +13,15 @@ const buildMenuTree = (items, parentId = null) => {
 };
 
 const hasActiveChild = (items, pathname) => {
-  return items.some((item) => {
-    if (item.url === pathname) {
-      return true;
-    }
-    if (item.children.length > 0) {
-      return hasActiveChild(item.children, pathname);
-    }
-    return false;
-  });
+  return items.some((item) => {
+    if (item.url === pathname) {
+      return true;
+    }
+    if (item.children.length > 0) {
+      return hasActiveChild(item.children, pathname);
+    }
+    return false;
+  });
 };
 
 export default function Nav({ color = "#3f78e0" }) {
@@ -50,14 +50,14 @@ export default function Nav({ color = "#3f78e0" }) {
   };
 
   const isActiveLink = (item) => {
-    if (item.url === pathname) {
-      return true;
-    }
-    if (item.children.length > 0) {
-      return hasActiveChild(item.children, pathname);
-    }
-    return false;
-  };
+    if (item.url === pathname) {
+      return true;
+    }
+    if (item.children.length > 0) {
+      return hasActiveChild(item.children, pathname);
+    }
+    return false;
+  };
 
 
 const renderMenuItems = (items) => {
@@ -109,7 +109,7 @@ const renderMenuItems = (items) => {
 };
 
 return (
-  <ul className="navbar-nav" style={{ "--current-color": color }}>
+  <ul className="navbar-nav mx-auto flex justify-center" style={{ "--current-color": color }}>
     {menuTree.map((item) => (
       <li
         key={item.id}

@@ -1,3 +1,5 @@
+// src/components/headers/Header33.jsx
+
 import React, { useEffect, useState } from "react";
 import Nav from "./Nav";
 import { Link } from "react-router-dom";
@@ -41,8 +43,8 @@ export default function Header33() {
         className="navbar navbar-expand-lg center-nav transparent position-absolute navbar-dark xl:pt-[.3rem] lg:pt-[.3rem]"
         style={{ "--current-color": "#3f78e0" }}
       >
-        <div className="container xl:!flex-row lg:!flex-row !flex-nowrap items-center">
-          <div className="navbar-brand w-full">
+        <div className="container xl:!flex-row lg:!flex-row !flex-nowrap items-center lg:!justify-between">
+          <div className="navbar-brand">
             <Link to={`/`}>
               <div className="flex items-center">
                 <img src={logo} alt="site logo" width={60} height={60} />
@@ -74,11 +76,10 @@ export default function Header33() {
                 aria-label="Close"
               />
             </div>
-            <div className="offcanvas-body xl:!ml-auto lg:!ml-auto flex flex-col !h-full">
+            <div className="offcanvas-body flex flex-col lg:!flex-row !h-full lg:justify-center lg:!grow">
               <ul className="navbar-nav">
                 <Nav />
               </ul>
-              {/* /.navbar-nav */}
               <div className="offcanvas-footer xl:!hidden lg:!hidden">
                 <div>
                   <a
@@ -104,12 +105,9 @@ export default function Header33() {
                   </nav>
                 </div>
               </div>
-              {/* /.offcanvas-footer */}
             </div>
-            {/* /.offcanvas-body */}
           </div>
-          {/* /.navbar-collapse */}
-          <div className="navbar-other w-full !flex !ml-auto">
+          <div className="navbar-other !flex !ml-auto">
             <ul className="navbar-nav !flex-row !items-center !ml-auto">
               <li className="nav-item hidden xl:block lg:block md:block">
                 <Link
@@ -129,13 +127,9 @@ export default function Header33() {
                 </button>
               </li>
             </ul>
-            {/* /.navbar-nav */}
           </div>
-          {/* /.navbar-other */}
         </div>
-        {/* /.container */}
       </nav>
-      {/* /.navbar */}
     </header>
   );
 }
