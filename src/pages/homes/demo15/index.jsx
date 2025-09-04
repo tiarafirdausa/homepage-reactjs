@@ -1,3 +1,5 @@
+// DemoPage15.jsx
+
 import Hero from "@/components/homes/home-15/Hero";
 import React, { useState, useEffect } from "react";
 import MetaComponent from "@/components/common/MetaComponent";
@@ -13,13 +15,14 @@ import Link from "@/components/modul/links";
 import { getHomeModules } from "@/services/modulService";
 import { getPosts } from "@/services/postService";
 import { getBanners } from "@/services/bannerService";
+import Header33 from "@/components/headers/Header33";
 
 const componentMap = {
   "popular-post": PostTerpopuler,
   "recent-post": PostTerbaru,
-  "media": MediaTerbaru,
-  "profile": Profile,
-  "link": Link,
+  media: MediaTerbaru,
+  profile: Profile,
+  link: Link,
 };
 
 export default function DemoPage15() {
@@ -58,7 +61,6 @@ export default function DemoPage15() {
 
         const combinedItems = [...banners, ...posts];
         setHeroItems(combinedItems);
-
       } catch (error) {
         console.error("Gagal mengambil data halaman utama:", error);
       } finally {
@@ -91,17 +93,13 @@ export default function DemoPage15() {
   return (
     <>
       <MetaComponent />
-      <div className="page-frame !bg-[#e0e9fa]">
-        <div className="grow shrink-0">
-          <Header32 colorClass="!bg-[#e0e9fa]" />
-          <div className="pt-[2rem]">
-            {!pageLoading && heroItems.length > 0 && <Hero heroItems={heroItems} />}
-            <section className="wrapper bg-[#21262c] opacity-100"></section>
-            {renderModules()}
-            <Footer5 />
-          </div>
-        </div>
-      </div>
+      <Header33 />
+      {!pageLoading && heroItems.length > 0 && <Hero heroItems={heroItems} />}
+      
+      {/* Wrapper dihapus dari sini, pemanggilan modul langsung */}
+      {renderModules()}
+
+      <Footer5 />
     </>
   );
 }
